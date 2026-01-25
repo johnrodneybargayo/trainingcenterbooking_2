@@ -176,9 +176,9 @@ function RequirementUploadItem({
     <div className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
       <div className="flex items-start gap-3 flex-1">
         {requirement.is_completed ? (
-          <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+          <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
         ) : (
-          <Circle className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+          <Circle className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
         )}
         <div className="flex-1">
           <p className="font-medium text-sm">{requirement.requirement_name}</p>

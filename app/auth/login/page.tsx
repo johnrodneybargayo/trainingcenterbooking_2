@@ -43,13 +43,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4 sm:p-6 md:p-10">
+    <div className="min-h-screen bg-linear-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4 sm:p-6 md:p-10">
       <div className="w-full max-w-md">
         <div className="flex flex-col gap-6">
           {/* Logo/Header */}
           <div className="text-center space-y-2 mb-4">
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-linear-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-xl">⚓</span>
               </div>
             </div>
@@ -115,7 +115,7 @@ export default function LoginPage() {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground font-semibold py-2"
+                  className="w-full bg-linear-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground font-semibold py-2"
                   disabled={isLoading}
                   size="lg"
                 >

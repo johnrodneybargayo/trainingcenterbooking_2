@@ -152,7 +152,7 @@ export default function BookingDetailsPage({
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+      <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
@@ -225,7 +225,7 @@ export default function BookingDetailsPage({
                 <CardContent className="space-y-4">
                   <div className="w-full bg-slate-200 rounded-full h-2">
                     <div
-                      className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300"
+                      className="bg-linear-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300"
                       style={{ width: `${totalReqs > 0 ? (completedReqs / totalReqs) * 100 : 0}%` }}
                     />
                   </div>
@@ -240,7 +240,7 @@ export default function BookingDetailsPage({
                             key={req.id}
                             className="flex items-start gap-4 p-4 bg-white rounded-lg border border-slate-200 hover:border-primary/30 transition-colors"
                           >
-                            <div className="flex-shrink-0 pt-0.5">
+                            <div className="shrink-0 pt-0.5">
                               <Checkbox checked={isCompleted} disabled className="h-5 w-5" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -257,7 +257,7 @@ export default function BookingDetailsPage({
                                   </p>
                                 </div>
                                 {isCompleted && (
-                                  <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                                 )}
                               </div>
                             </div>

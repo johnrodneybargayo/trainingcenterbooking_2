@@ -125,12 +125,12 @@ export default function TrainingCenterAdminDashboard() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gradient-to-br from-background to-muted/30">
+      <main className="min-h-screen bg-linear-to-br from-background to-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-linear-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                 <Building2 className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>

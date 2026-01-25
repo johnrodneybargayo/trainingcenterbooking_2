@@ -119,7 +119,7 @@ export default function HomePage() {
       <Navbar />
       <main className="min-h-screen bg-background">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/80 to-secondary text-primary-foreground py-16 md:py-24">
+        <section className="relative overflow-hidden bg-linear-to-br from-primary via-primary/80 to-secondary text-primary-foreground py-16 md:py-24">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0 bg-grid-white/[0.2]" />
           </div>
@@ -209,8 +209,9 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Desktop Sidebar Filters */}
-            <aside className="hidden lg:block w-64 flex-shrink-0">
-              <div className="sticky top-32 space-y-6 bg-card p-6 rounded-lg border border-border">
+            <aside className="hidden lg:block w-64 shrink-0">
+              <div className="sticky top-24 space-y-8">
+                {/* Training Centers List */}
                 <div>
                   <h3 className="font-semibold mb-3 flex items-center justify-between">
                     Filters

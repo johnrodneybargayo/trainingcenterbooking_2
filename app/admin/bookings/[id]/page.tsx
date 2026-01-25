@@ -232,7 +232,7 @@ export default function AdminBookingDetailsPage({
                           className="flex items-start gap-3 p-3 border border-border rounded-lg bg-muted/30"
                         >
                           <div
-                            className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                            className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 ${
                               bookingReq?.is_completed ? "border-green-600 bg-green-600" : "border-gray-300"
                             }`}
                           >
