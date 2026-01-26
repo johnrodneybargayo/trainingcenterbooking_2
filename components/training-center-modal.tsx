@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle2, Circle, Clock, MapPin, Users, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type { TrainingCenter } from "@/lib/products"
+import { mockTrainingCenters } from "@/lib/mock-data"
 
 interface TrainingCenterModalProps {
   trainingCenterId: string
@@ -42,7 +43,10 @@ export default function TrainingCenterModal({ trainingCenterId, open, onOpenChan
           .eq("id", trainingCenterId)
           .single()
 
-        if (centerError) throw centerError
+        if (centerError) {
+          console.warn("Supabase error fetching center, falling back to mock data:", centerError)
+          throw centerError
+        }
         setTrainingCenter(centerData)
 
         // Fetch requirements
@@ -51,10 +55,20 @@ export default function TrainingCenterModal({ trainingCenterId, open, onOpenChan
           .select("*")
           .eq("training_center_id", trainingCenterId)
 
-        if (reqError) throw reqError
+        if (reqError) {
+           console.warn("Supabase error fetching requirements:", reqError)
+           // Don't throw for requirements, just empty array or mock if we had it
+        }
         setRequirements(reqData || [])
       } catch (error) {
         console.error("Error fetching data:", error)
+        // Fallback to mock data
+        const mockCenter = mockTrainingCenters.find(c => c.id === trainingCenterId)
+        if (mockCenter) {
+           setTrainingCenter(mockCenter)
+           // We don't have mock requirements in the provided file, so empty array is fine
+           setRequirements([])
+        }
       } finally {
         setIsLoading(false)
       }

@@ -1,105 +1,19 @@
 "use client"
 
+import { useState } from "react"
 import Navbar from "@/components/navbar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 import { BarChart3, TrendingUp, Activity, AlertCircle } from "lucide-react"
-import type { Booking, TrainingCenter } from "@/lib/products"
-
-const DEMO_BOOKINGS: (Booking & { training_center?: TrainingCenter })[] = [
-  {
-    id: "booking-001",
-    user_id: "user-001",
-    training_center_id: "tc-001",
-    booking_date: new Date().toISOString(),
-    status: "confirmed",
-    payment_id: "pay-001",
-    price_cents: 299900,
-    created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    training_center: {
-      id: "tc-001",
-      name: "Maritime Academy Singapore",
-      location: "Singapore",
-      description: "Leading maritime training institution",
-      image_url: "/maritime-training-center.jpg",
-      price_cents: 299900,
-      duration_days: 30,
-      rating: 4.8,
-      reviews_count: 45,
-      capacity: 50,
-    },
-  },
-  {
-    id: "booking-002",
-    user_id: "user-002",
-    training_center_id: "tc-002",
-    booking_date: new Date().toISOString(),
-    status: "pending",
-    payment_id: null,
-    price_cents: 189900,
-    created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    training_center: {
-      id: "tc-002",
-      name: "Pacific Nautical Training",
-      location: "Philippines",
-      description: "Comprehensive nautical officer programs",
-      image_url: "/nautical-training.jpg",
-      price_cents: 189900,
-      duration_days: 21,
-      rating: 4.6,
-      reviews_count: 32,
-      capacity: 40,
-    },
-  },
-  {
-    id: "booking-003",
-    user_id: "user-003",
-    training_center_id: "tc-001",
-    booking_date: new Date().toISOString(),
-    status: "completed",
-    payment_id: "pay-003",
-    price_cents: 299900,
-    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    training_center: {
-      id: "tc-001",
-      name: "Maritime Academy Singapore",
-      location: "Singapore",
-      description: "Leading maritime training institution",
-      image_url: "/maritime-training-center.jpg",
-      price_cents: 299900,
-      duration_days: 30,
-      rating: 4.8,
-      reviews_count: 45,
-      capacity: 50,
-    },
-  },
-  {
-    id: "booking-004",
-    user_id: "user-004",
-    training_center_id: "tc-003",
-    booking_date: new Date().toISOString(),
-    status: "confirmed",
-    payment_id: "pay-004",
-    price_cents: 149900,
-    created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    training_center: {
-      id: "tc-003",
-      name: "Mumbai Marine Institute",
-      location: "India",
-      description: "Expert vessel operations training",
-      image_url: "/marine-institute-training.jpg",
-      price_cents: 149900,
-      duration_days: 14,
-      rating: 4.5,
-      reviews_count: 28,
-      capacity: 35,
-    },
-  },
-]
+import { mockBookings } from "@/lib/mock-data"
+import BookingDetailsModal from "@/components/booking-details-modal"
 
 export default function AdminDashboard() {
-  const bookings = DEMO_BOOKINGS
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
+  const [showModal, setShowModal] = useState(false)
+  const bookings = mockBookings
 
   const stats = {
     totalBookings: bookings.length,
@@ -234,7 +148,15 @@ export default function AdminDashboard() {
                             </Badge>
                           </td>
                           <td className="py-3 px-4">
-                            <Button size="sm" variant="outline" className="text-xs bg-transparent">
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="text-xs bg-transparent"
+                              onClick={() => {
+                                setSelectedBookingId(booking.id)
+                                setShowModal(true)
+                              }}
+                            >
                               View
                             </Button>
                           </td>
@@ -251,6 +173,12 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
+        <BookingDetailsModal 
+          bookingId={selectedBookingId}
+          open={showModal}
+          onOpenChange={setShowModal}
+          isAdminView={true}
+        />
       </main>
     </>
   )

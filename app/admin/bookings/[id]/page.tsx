@@ -56,7 +56,28 @@ export default function AdminBookingDetailsPage({
 
     const fetchData = async () => {
       try {
-        const { data: bookingData } = await supabase.from("bookings").select("*").eq("id", resolvedParams.id).single()
+        let bookingData = null
+        let centerData = null
+
+        // Try Supabase first
+        const { data: sbBooking } = await supabase.from("bookings").select("*").eq("id", resolvedParams.id).single()
+
+        if (sbBooking) {
+          bookingData = sbBooking
+          const { data: sbCenter } = await supabase
+            .from("training_centers")
+            .select("*")
+            .eq("id", sbBooking.training_center_id)
+            .single()
+          centerData = sbCenter
+        } else {
+          // Fallback to mock data
+          const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
+          if (mockBooking) {
+            bookingData = mockBooking
+            centerData = mockBooking.training_center
+          }
+        }
 
         if (!bookingData) {
           router.push("/admin/dashboard")
@@ -64,15 +85,9 @@ export default function AdminBookingDetailsPage({
         }
 
         setBooking(bookingData)
-
-        const { data: centerData } = await supabase
-          .from("training_centers")
-          .select("*")
-          .eq("id", bookingData.training_center_id)
-          .single()
-
         setCenter(centerData)
 
+        // Fetch requirements
         const { data: reqsData } = await supabase
           .from("requirements")
           .select("*")
@@ -88,6 +103,12 @@ export default function AdminBookingDetailsPage({
         setBookingReqs(bookingReqsData || [])
       } catch (error) {
         console.error("Error fetching data:", error)
+        // Try mock data as last resort
+        const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
+        if (mockBooking) {
+          setBooking(mockBooking)
+          setCenter(mockBooking.training_center)
+        }
       } finally {
         setIsLoading(false)
       }

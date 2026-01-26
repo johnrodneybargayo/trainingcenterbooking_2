@@ -98,7 +98,7 @@ export const mockCourses = [
     training_center_id: "center-002",
     name: "Officer of the Watch (OOW)",
     description: "Officer certification program",
-    duration_hours: 168,
+    duration_hours: 120,
     capacity: 25,
   },
   {
@@ -315,7 +315,7 @@ export const mockPlatformAdmins: Profile[] = [
 ]
 
 // Mock Bookings
-export const mockBookings: Booking[] = [
+export const mockBookings: (Booking & { training_center?: TrainingCenter })[] = [
   {
     id: "booking-001",
     user_id: "user-001",
@@ -327,6 +327,7 @@ export const mockBookings: Booking[] = [
     price_cents: 180000,
     convenience_fee_cents: 5400,
     created_at: "2024-01-20T10:30:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-001")
   },
   {
     id: "booking-002",
@@ -339,6 +340,7 @@ export const mockBookings: Booking[] = [
     price_cents: 220000,
     convenience_fee_cents: 6600,
     created_at: "2024-01-25T14:15:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-002")
   },
   {
     id: "booking-003",
@@ -351,6 +353,7 @@ export const mockBookings: Booking[] = [
     price_cents: 200000,
     convenience_fee_cents: 6000,
     created_at: "2024-02-01T09:45:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-003")
   },
   {
     id: "booking-004",
@@ -363,6 +366,7 @@ export const mockBookings: Booking[] = [
     price_cents: 180000,
     convenience_fee_cents: 5400,
     created_at: "2024-02-05T11:20:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-001")
   },
   {
     id: "booking-005",
@@ -375,6 +379,7 @@ export const mockBookings: Booking[] = [
     price_cents: 150000,
     convenience_fee_cents: 4500,
     created_at: "2024-02-10T13:30:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-004")
   },
   {
     id: "booking-006",
@@ -387,6 +392,7 @@ export const mockBookings: Booking[] = [
     price_cents: 220000,
     convenience_fee_cents: 6600,
     created_at: "2024-02-15T10:00:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-002")
   },
   {
     id: "booking-007",
@@ -399,6 +405,7 @@ export const mockBookings: Booking[] = [
     price_cents: 170000,
     convenience_fee_cents: 5100,
     created_at: "2024-02-20T15:45:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-005")
   },
   {
     id: "booking-008",
@@ -411,6 +418,7 @@ export const mockBookings: Booking[] = [
     price_cents: 150000,
     convenience_fee_cents: 4500,
     created_at: "2024-02-22T12:15:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-004")
   },
   {
     id: "booking-009",
@@ -423,6 +431,7 @@ export const mockBookings: Booking[] = [
     price_cents: 200000,
     convenience_fee_cents: 6000,
     created_at: "2024-02-25T16:30:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-003")
   },
   {
     id: "booking-010",
@@ -435,6 +444,7 @@ export const mockBookings: Booking[] = [
     price_cents: 170000,
     convenience_fee_cents: 5100,
     created_at: "2024-03-01T08:00:00Z",
+    training_center: mockTrainingCenters.find(c => c.id === "center-005")
   },
 ]
 

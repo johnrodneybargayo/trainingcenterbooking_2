@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Navbar from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,56 +8,15 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { BookOpen, CheckCircle2, Clock, DollarSign, MapPin, AlertCircle } from "lucide-react"
 import type { Booking, TrainingCenter } from "@/lib/products"
-
-const DEMO_USER_BOOKINGS: (Booking & { training_center?: TrainingCenter })[] = [
-  {
-    id: "booking-001",
-    user_id: "user-001",
-    training_center_id: "tc-001",
-    booking_date: new Date().toISOString(),
-    status: "confirmed",
-    payment_id: "pay-001",
-    price_cents: 299900,
-    created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    training_center: {
-      id: "tc-001",
-      name: "Maritime Academy Singapore",
-      location: "Singapore",
-      description: "Leading maritime training institution with state-of-the-art facilities",
-      image_url: "/maritime-training-center.jpg",
-      price_cents: 299900,
-      duration_days: 30,
-      rating: 4.8,
-      reviews_count: 45,
-      capacity: 50,
-    },
-  },
-  {
-    id: "booking-006",
-    user_id: "user-001",
-    training_center_id: "tc-002",
-    booking_date: new Date().toISOString(),
-    status: "pending",
-    payment_id: null,
-    price_cents: 189900,
-    created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    training_center: {
-      id: "tc-002",
-      name: "Pacific Nautical Training",
-      location: "Philippines",
-      description: "Comprehensive nautical officer programs for seafarers",
-      image_url: "/nautical-training.jpg",
-      price_cents: 189900,
-      duration_days: 21,
-      rating: 4.6,
-      reviews_count: 32,
-      capacity: 40,
-    },
-  },
-]
+import { BookingDetailsModal } from "@/components/booking-details-modal"
+import { mockBookings } from "@/lib/mock-data"
 
 export default function DashboardPage() {
-  const bookings = DEMO_USER_BOOKINGS
+  const [bookings] = useState<(Booking & { training_center?: TrainingCenter })[]>(
+    mockBookings.filter(b => b.user_id === "user-001")
+  )
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
+  const [showModal, setShowModal] = useState(false)
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -201,7 +161,15 @@ export default function DashboardPage() {
                           <Badge className={`${getStatusColor(booking.status)} text-xs md:text-sm px-3 py-1`}>
                             {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                           </Badge>
-                          <Button variant="outline" size="sm" className="text-xs md:text-sm bg-transparent">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-xs md:text-sm bg-transparent"
+                            onClick={() => {
+                              setSelectedBookingId(booking.id)
+                              setShowModal(true)
+                            }}
+                          >
                             View Details
                           </Button>
                         </div>
@@ -225,6 +193,11 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+        <BookingDetailsModal 
+          bookingId={selectedBookingId}
+          open={showModal}
+          onOpenChange={setShowModal}
+        />
       </main>
     </>
   )

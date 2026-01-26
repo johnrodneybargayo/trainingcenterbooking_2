@@ -10,49 +10,11 @@ import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
 import { Search, Filter, X } from "lucide-react"
 import type { TrainingCenter } from "@/lib/products"
-
-const DEMO_TRAINING_CENTERS: TrainingCenter[] = [
-  {
-    id: "tc-001",
-    name: "Maritime Academy Singapore",
-    location: "Singapore",
-    description: "Leading maritime training institution with state-of-the-art facilities",
-    image_url: "/maritime-training-center.jpg",
-    price_cents: 299900,
-    duration_days: 30,
-    rating: 4.8,
-    reviews_count: 45,
-    capacity: 50,
-  },
-  {
-    id: "tc-002",
-    name: "Pacific Nautical Training",
-    location: "Philippines",
-    description: "Comprehensive nautical officer programs for seafarers",
-    image_url: "/nautical-training.jpg",
-    price_cents: 189900,
-    duration_days: 21,
-    rating: 4.6,
-    reviews_count: 32,
-    capacity: 40,
-  },
-  {
-    id: "tc-003",
-    name: "Mumbai Marine Institute",
-    location: "India",
-    description: "Expert vessel operations and marine engineering training",
-    image_url: "/marine-institute-training.jpg",
-    price_cents: 149900,
-    duration_days: 14,
-    rating: 4.5,
-    reviews_count: 28,
-    capacity: 35,
-  },
-]
+import { mockTrainingCenters } from "@/lib/mock-data"
 
 export default function HomePage() {
-  const [trainingCenters] = useState<TrainingCenter[]>(DEMO_TRAINING_CENTERS)
-  const [filteredCenters, setFilteredCenters] = useState<TrainingCenter[]>(DEMO_TRAINING_CENTERS)
+  const [trainingCenters] = useState<TrainingCenter[]>(mockTrainingCenters)
+  const [filteredCenters, setFilteredCenters] = useState<TrainingCenter[]>(mockTrainingCenters)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedLocation, setSelectedLocation] = useState("all")
   const [selectedDuration, setSelectedDuration] = useState("all")

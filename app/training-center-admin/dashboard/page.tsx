@@ -1,62 +1,20 @@
 "use client"
 
+import { useState } from "react"
 import Navbar from "@/components/navbar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Building2, CheckCircle2, Clock, DollarSign, TrendingUp, AlertCircle, Users } from "lucide-react"
-import type { Booking, TrainingCenter } from "@/lib/products"
-
-const DEMO_CENTER: TrainingCenter = {
-  id: "tc-001",
-  name: "Maritime Academy Singapore",
-  location: "Singapore",
-  description: "Leading maritime training institution with state-of-the-art facilities",
-  image_url: "/maritime-training-center.jpg",
-  price_cents: 299900,
-  duration_days: 30,
-  rating: 4.8,
-  reviews_count: 45,
-  capacity: 50,
-}
-
-const DEMO_CENTER_BOOKINGS: Booking[] = [
-  {
-    id: "booking-001",
-    user_id: "user-001",
-    training_center_id: "tc-001",
-    booking_date: new Date().toISOString(),
-    status: "confirmed",
-    payment_id: "pay-001",
-    price_cents: 299900,
-    created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "booking-005",
-    user_id: "user-005",
-    training_center_id: "tc-001",
-    booking_date: new Date().toISOString(),
-    status: "pending",
-    payment_id: null,
-    price_cents: 299900,
-    created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "booking-003",
-    user_id: "user-003",
-    training_center_id: "tc-001",
-    booking_date: new Date().toISOString(),
-    status: "completed",
-    payment_id: "pay-003",
-    price_cents: 299900,
-    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-]
+import { mockTrainingCenters, getBookingsByCenter } from "@/lib/mock-data"
+import BookingDetailsModal from "@/components/booking-details-modal"
 
 export default function TrainingCenterAdminDashboard() {
-  const trainingCenter = DEMO_CENTER
-  const bookings = DEMO_CENTER_BOOKINGS
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
+  const [showModal, setShowModal] = useState(false)
+  const trainingCenter = mockTrainingCenters[0]
+  const bookings = getBookingsByCenter(trainingCenter.id)
 
   const stats = {
     totalBookings: bookings.length,
@@ -216,7 +174,15 @@ export default function TrainingCenterAdminDashboard() {
                                     </Badge>
                                   </td>
                                   <td className="py-3 px-4">
-                                    <Button size="sm" variant="outline" className="bg-transparent">
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline" 
+                                      className="bg-transparent"
+                                      onClick={() => {
+                                        setSelectedBookingId(booking.id)
+                                        setShowModal(true)
+                                      }}
+                                    >
                                       View
                                     </Button>
                                   </td>
@@ -240,6 +206,12 @@ export default function TrainingCenterAdminDashboard() {
             </CardContent>
           </Card>
         </div>
+        <BookingDetailsModal 
+          bookingId={selectedBookingId}
+          open={showModal}
+          onOpenChange={setShowModal}
+          isAdminView={true}
+        />
       </main>
     </>
   )

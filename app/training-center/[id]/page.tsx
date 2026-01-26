@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Clock, MapPin, Users, Star } from "lucide-react"
 import Link from "next/link"
 import type { TrainingCenter } from "@/lib/products"
+import { mockTrainingCenters } from "@/lib/mock-data"
 
 export default function TrainingCenterPage({
   params,
@@ -31,10 +32,25 @@ export default function TrainingCenterPage({
           .eq("id", id)
           .single()
 
-        if (error) throw error
-        setCenter(data)
+        if (error) {
+           // Fallback to mock data if Supabase fails (or returns no data)
+           console.warn("Supabase error fetching training center, using mock data:", error)
+           const mockCenter = mockTrainingCenters.find(c => c.id === id)
+           if (mockCenter) {
+             setCenter(mockCenter)
+           } else {
+             throw error // Re-throw if not found in mock either
+           }
+        } else {
+           setCenter(data)
+        }
       } catch (error) {
         console.error("Error fetching training center:", error)
+        // Try mock data if we haven't already
+        const mockCenter = mockTrainingCenters.find(c => c.id === id)
+        if (mockCenter) {
+            setCenter(mockCenter)
+        }
       } finally {
         setIsLoading(false)
       }

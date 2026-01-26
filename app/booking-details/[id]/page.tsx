@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import Link from "next/link"
 import { CheckCircle2, AlertCircle, Clock, MapPin, Award } from "lucide-react"
 import type { Booking, TrainingCenter, Requirement } from "@/lib/products"
+import { mockBookings } from "@/lib/mock-data"
 
 export default function BookingDetailsPage({
   params,
@@ -52,12 +53,33 @@ export default function BookingDetailsPage({
 
     const fetchData = async () => {
       try {
-        const { data: bookingData } = await supabase
+        let bookingData = null
+        let centerData = null
+
+        // Try to fetch from Supabase first
+        const { data: sbBooking } = await supabase
           .from("bookings")
           .select("*")
           .eq("id", resolvedParams.id)
           .eq("user_id", user.id)
           .single()
+
+        if (sbBooking) {
+          bookingData = sbBooking
+          const { data: sbCenter } = await supabase
+            .from("training_centers")
+            .select("*")
+            .eq("id", sbBooking.training_center_id)
+            .single()
+          centerData = sbCenter
+        } else {
+          // Fallback to mock data
+          const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
+          if (mockBooking) {
+            bookingData = mockBooking
+            centerData = mockBooking.training_center
+          }
+        }
 
         if (!bookingData) {
           router.push("/dashboard")
@@ -65,15 +87,9 @@ export default function BookingDetailsPage({
         }
 
         setBooking(bookingData)
-
-        const { data: centerData } = await supabase
-          .from("training_centers")
-          .select("*")
-          .eq("id", bookingData.training_center_id)
-          .single()
-
         setCenter(centerData)
 
+        // Fetch requirements (try Supabase, fallback to empty or mock if needed)
         const { data: reqsData } = await supabase
           .from("requirements")
           .select("*")
@@ -89,6 +105,12 @@ export default function BookingDetailsPage({
         setBookingReqs(bookingReqsData || [])
       } catch (error) {
         console.error("Error fetching data:", error)
+        // Try mock data as last resort if error occurs
+        const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
+        if (mockBooking) {
+          setBooking(mockBooking)
+          setCenter(mockBooking.training_center)
+        }
       } finally {
         setIsLoading(false)
       }
