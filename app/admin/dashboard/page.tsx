@@ -54,7 +54,7 @@ export default function AdminDashboard() {
       if (bookingsData) {
         // Fetch training center details
         const bookingsWithCenters = await Promise.all(
-          bookingsData.map(async (booking: Booking) => {
+          bookingsData.map(async (booking) => {
             const { data: centerData } = await supabase
               .from("training_centers")
               .select("*")
