@@ -2,11 +2,15 @@
 
 import { useState } from "react"
 import Navbar from "@/components/navbar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Building2, CheckCircle2, Clock, DollarSign, TrendingUp, AlertCircle, Users } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { Building2, CheckCircle2, Clock, DollarSign, TrendingUp, AlertCircle, Users, Settings, Save } from "lucide-react"
 import { mockTrainingCenters, getBookingsByCenter } from "@/lib/mock-data"
 import BookingDetailsModal from "@/components/booking-details-modal"
 
@@ -15,6 +19,27 @@ export default function TrainingCenterAdminDashboard() {
   const [showModal, setShowModal] = useState(false)
   const trainingCenter = mockTrainingCenters[0]
   const bookings = getBookingsByCenter(trainingCenter.id)
+  
+  // Settings State
+  const [centerSettings, setCenterSettings] = useState({
+    name: trainingCenter.name,
+    location: trainingCenter.location,
+    description: trainingCenter.description,
+    price: trainingCenter.price_cents / 100,
+    capacity: trainingCenter.capacity,
+    autoApprove: false,
+    emailNotifications: true,
+  })
+  const [isSaving, setIsSaving] = useState(false)
+
+  const handleSaveSettings = () => {
+    setIsSaving(true)
+    // Simulate API call
+    setTimeout(() => {
+      setIsSaving(false)
+      // toast.success("Settings saved")
+    }, 1000)
+  }
 
   const stats = {
     totalBookings: bookings.length,
@@ -92,119 +117,216 @@ export default function TrainingCenterAdminDashboard() {
                 <Building2 className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold">{trainingCenter.name}</h1>
-                <p className="text-muted-foreground text-sm mt-1">{trainingCenter.location}</p>
+                <h1 className="text-3xl md:text-4xl font-bold">{centerSettings.name}</h1>
+                <p className="text-muted-foreground text-sm mt-1">{centerSettings.location}</p>
               </div>
             </div>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            {statCards.map((stat) => {
-              const Icon = stat.icon
-              return (
-                <Card key={stat.title} className="border border-border/50">
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
-                        <p className="text-2xl md:text-3xl font-bold">{stat.value}</p>
-                      </div>
-                      <div className={`p-3 rounded-lg bg-muted ${stat.color}`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
+          <Tabs defaultValue="overview" className="space-y-8">
+            <TabsList>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+            </TabsList>
 
-          {/* Bookings Management */}
-          <Card className="border border-border/50">
-            <CardHeader className="border-b border-border/50">
-              <CardTitle className="text-xl md:text-2xl">Booking Management</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <Tabs defaultValue="all" className="w-full">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="all">All ({stats.totalBookings})</TabsTrigger>
-                  <TabsTrigger value="pending">Pending ({stats.pendingBookings})</TabsTrigger>
-                  <TabsTrigger value="confirmed">Confirmed ({stats.confirmedBookings})</TabsTrigger>
-                  <TabsTrigger value="completed">Completed ({stats.completedBookings})</TabsTrigger>
-                </TabsList>
-
-                {["all", "pending", "confirmed", "completed"].map((tab) => {
-                  const filteredBookings = tab === "all" ? bookings : bookings.filter((b) => b.status === tab)
-
+            <TabsContent value="overview" className="space-y-8">
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {statCards.map((stat) => {
+                  const Icon = stat.icon
                   return (
-                    <TabsContent key={tab} value={tab}>
-                      {filteredBookings.length > 0 ? (
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr className="border-b border-border">
-                                <th className="text-left py-3 px-4 font-semibold">Booking ID</th>
-                                <th className="text-left py-3 px-4 font-semibold">Student</th>
-                                <th className="text-left py-3 px-4 font-semibold">Price</th>
-                                <th className="text-left py-3 px-4 font-semibold">Booking Date</th>
-                                <th className="text-left py-3 px-4 font-semibold">Status</th>
-                                <th className="text-left py-3 px-4 font-semibold">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {filteredBookings.map((booking) => (
-                                <tr
-                                  key={booking.id}
-                                  className="border-b border-border hover:bg-muted/50 transition-colors"
-                                >
-                                  <td className="py-3 px-4 font-mono text-xs text-muted-foreground">
-                                    {booking.id.substring(0, 8)}...
-                                  </td>
-                                  <td className="py-3 px-4 text-muted-foreground text-xs truncate max-w-xs">
-                                    {booking.user_id.substring(0, 20)}...
-                                  </td>
-                                  <td className="py-3 px-4 font-medium">${(booking.price_cents / 100).toFixed(2)}</td>
-                                  <td className="py-3 px-4 text-muted-foreground text-sm">
-                                    {new Date(booking.created_at).toLocaleDateString()}
-                                  </td>
-                                  <td className="py-3 px-4">
-                                    <Badge className={getStatusColor(booking.status)}>
-                                      {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                                    </Badge>
-                                  </td>
-                                  <td className="py-3 px-4">
-                                    <Button 
-                                      size="sm" 
-                                      variant="outline" 
-                                      className="bg-transparent"
-                                      onClick={() => {
-                                        setSelectedBookingId(booking.id)
-                                        setShowModal(true)
-                                      }}
-                                    >
-                                      View
-                                    </Button>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                    <Card key={stat.title} className="border border-border/50">
+                      <CardContent className="pt-6">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
+                            <p className="text-2xl md:text-3xl font-bold">{stat.value}</p>
+                          </div>
+                          <div className={`p-3 rounded-lg bg-muted ${stat.color}`}>
+                            <Icon className="w-5 h-5" />
+                          </div>
                         </div>
-                      ) : (
-                        <div className="text-center py-12">
-                          <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-                          <p className="text-muted-foreground">
-                            No {tab === "all" ? "bookings" : `${tab} bookings`} found
-                          </p>
-                        </div>
-                      )}
-                    </TabsContent>
+                      </CardContent>
+                    </Card>
                   )
                 })}
-              </Tabs>
-            </CardContent>
-          </Card>
+              </div>
+
+              {/* Bookings Management */}
+              <Card className="border border-border/50">
+                <CardHeader className="border-b border-border/50">
+                  <CardTitle className="text-xl md:text-2xl">Booking Management</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <Tabs defaultValue="all" className="w-full">
+                    <TabsList className="mb-6">
+                      <TabsTrigger value="all">All ({stats.totalBookings})</TabsTrigger>
+                      <TabsTrigger value="pending">Pending ({stats.pendingBookings})</TabsTrigger>
+                      <TabsTrigger value="confirmed">Confirmed ({stats.confirmedBookings})</TabsTrigger>
+                      <TabsTrigger value="completed">Completed ({stats.completedBookings})</TabsTrigger>
+                    </TabsList>
+
+                    {["all", "pending", "confirmed", "completed"].map((tab) => {
+                      const filteredBookings = tab === "all" ? bookings : bookings.filter((b) => b.status === tab)
+
+                      return (
+                        <TabsContent key={tab} value={tab}>
+                          {filteredBookings.length > 0 ? (
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-sm">
+                                <thead>
+                                  <tr className="border-b border-border">
+                                    <th className="text-left py-3 px-4 font-semibold">Booking ID</th>
+                                    <th className="text-left py-3 px-4 font-semibold">Student</th>
+                                    <th className="text-left py-3 px-4 font-semibold">Price</th>
+                                    <th className="text-left py-3 px-4 font-semibold">Booking Date</th>
+                                    <th className="text-left py-3 px-4 font-semibold">Status</th>
+                                    <th className="text-left py-3 px-4 font-semibold">Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {filteredBookings.map((booking) => (
+                                    <tr
+                                      key={booking.id}
+                                      className="border-b border-border hover:bg-muted/50 transition-colors"
+                                    >
+                                      <td className="py-3 px-4 font-mono text-xs text-muted-foreground">
+                                        {booking.id.substring(0, 8)}...
+                                      </td>
+                                      <td className="py-3 px-4 text-muted-foreground text-xs truncate max-w-xs">
+                                        {booking.user_id.substring(0, 20)}...
+                                      </td>
+                                      <td className="py-3 px-4 font-medium">${(booking.price_cents / 100).toFixed(2)}</td>
+                                      <td className="py-3 px-4 text-muted-foreground text-sm">
+                                        {new Date(booking.created_at).toLocaleDateString()}
+                                      </td>
+                                      <td className="py-3 px-4">
+                                        <Badge className={getStatusColor(booking.status)}>
+                                          {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                                        </Badge>
+                                      </td>
+                                      <td className="py-3 px-4">
+                                        <Button 
+                                          size="sm" 
+                                          variant="outline" 
+                                          className="bg-transparent"
+                                          onClick={() => {
+                                            setSelectedBookingId(booking.id)
+                                            setShowModal(true)
+                                          }}
+                                        >
+                                          View
+                                        </Button>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          ) : (
+                            <div className="text-center py-12">
+                              <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+                              <p className="text-muted-foreground">
+                                No {tab === "all" ? "bookings" : `${tab} bookings`} found
+                              </p>
+                            </div>
+                          )}
+                        </TabsContent>
+                      )
+                    })}
+                  </Tabs>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="settings">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Training Center Settings</CardTitle>
+                  <CardDescription>
+                    Manage your training center profile, capacity, and preferences.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="center-name">Training Center Name</Label>
+                    <Input 
+                      id="center-name" 
+                      value={centerSettings.name} 
+                      onChange={(e) => setCenterSettings({...centerSettings, name: e.target.value})}
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="location">Location</Label>
+                      <Input 
+                        id="location" 
+                        value={centerSettings.location} 
+                        onChange={(e) => setCenterSettings({...centerSettings, location: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="capacity">Daily Capacity</Label>
+                      <Input 
+                        id="capacity" 
+                        type="number"
+                        value={centerSettings.capacity} 
+                        onChange={(e) => setCenterSettings({...centerSettings, capacity: parseInt(e.target.value) || 0})}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea 
+                      id="description" 
+                      className="min-h-[100px]"
+                      value={centerSettings.description} 
+                      onChange={(e) => setCenterSettings({...centerSettings, description: e.target.value})}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <Label className="text-base">Automatic Approval</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Automatically confirm bookings when capacity is available.
+                      </p>
+                    </div>
+                    <Switch 
+                      checked={centerSettings.autoApprove}
+                      onCheckedChange={(checked) => setCenterSettings({...centerSettings, autoApprove: checked})}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <Label className="text-base">Email Notifications</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive email alerts for new bookings and cancellations.
+                      </p>
+                    </div>
+                    <Switch 
+                      checked={centerSettings.emailNotifications}
+                      onCheckedChange={(checked) => setCenterSettings({...centerSettings, emailNotifications: checked})}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button onClick={handleSaveSettings} disabled={isSaving}>
+                    {isSaving ? (
+                      <>Saving...</>
+                    ) : (
+                      <>
+                        <Save className="mr-2 h-4 w-4" /> Save Changes
+                      </>
+                    )}
+                  </Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
         <BookingDetailsModal 
           bookingId={selectedBookingId}

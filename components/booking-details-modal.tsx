@@ -245,18 +245,29 @@ export default function BookingDetailsModal({
             </div>
 
             {/* Requirements Section */}
-            {!isAdminView && requirements.length > 0 && (
+            {requirements.length > 0 && (
                <div className="space-y-3">
                   <h4 className="font-medium">Documentation Status</h4>
                   <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
                      {requirements.map((req) => {
-                        const isCompleted = bookingReqs.some(br => br.requirement_id === req.id && br.is_completed)
+                        const bookingReq = bookingReqs.find(br => br.requirement_id === req.id)
+                        const isCompleted = bookingReq?.is_completed || false
+                        const docUrl = bookingReq?.document_url
+                        
                         return (
-                           <div key={req.id} className="flex items-center gap-3 p-2 text-sm border rounded hover:bg-muted/50">
-                              <Checkbox checked={isCompleted} disabled className="w-4 h-4" />
-                              <span className={isCompleted ? "line-through text-muted-foreground" : ""}>
-                                 {req.requirement_name}
-                              </span>
+                           <div key={req.id} className="flex items-center justify-between gap-3 p-2 text-sm border rounded hover:bg-muted/50">
+                              <div className="flex items-center gap-3">
+                                <Checkbox checked={isCompleted} disabled className="w-4 h-4" />
+                                <span className={isCompleted ? "text-foreground" : "text-muted-foreground"}>
+                                   {req.requirement_name}
+                                   {req.is_mandatory && <span className="text-destructive ml-1">*</span>}
+                                </span>
+                              </div>
+                              {isAdminView && isCompleted && docUrl && (
+                                <Button size="sm" variant="ghost" className="h-6 text-xs" asChild>
+                                  <a href={docUrl} target="_blank" rel="noopener noreferrer">View Doc</a>
+                                </Button>
+                              )}
                            </div>
                         )
                      })}
