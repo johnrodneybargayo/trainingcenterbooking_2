@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
 import { CheckCircle2, Circle, AlertCircle, Clock, DollarSign } from "lucide-react"
 import type { TrainingCenter, Requirement } from "@/lib/products"
+import { mockTrainingCenters, mockRequirements } from "@/lib/mock-data"
 
 export default function BookingPage({
   params,
@@ -49,13 +50,28 @@ export default function BookingPage({
       try {
         const { data: centerData } = await supabase.from("training_centers").select("*").eq("id", id).single()
 
-        setCenter(centerData)
-
-        const { data: reqData } = await supabase.from("requirements").select("*").eq("training_center_id", id)
-
-        setRequirements(reqData || [])
+        if (centerData) {
+          setCenter(centerData)
+          const { data: reqData } = await supabase.from("requirements").select("*").eq("training_center_id", id)
+          setRequirements(reqData || [])
+        } else {
+          // Fallback to mock data if not found in Supabase
+          const mockCenter = mockTrainingCenters.find((c) => c.id === id)
+          if (mockCenter) {
+            setCenter(mockCenter)
+            const mockReqs = mockRequirements.filter((r) => r.training_center_id === id)
+            setRequirements(mockReqs)
+          }
+        }
       } catch (error) {
         console.error("Error fetching data:", error)
+        // Fallback to mock data on error
+        const mockCenter = mockTrainingCenters.find((c) => c.id === id)
+        if (mockCenter) {
+          setCenter(mockCenter)
+          const mockReqs = mockRequirements.filter((r) => r.training_center_id === id)
+          setRequirements(mockReqs)
+        }
       } finally {
         setIsLoading(false)
       }

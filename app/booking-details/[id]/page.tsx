@@ -77,7 +77,7 @@ export default function BookingDetailsPage({
           const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
           if (mockBooking) {
             bookingData = mockBooking
-            centerData = mockBooking.training_center
+            centerData = mockBooking.training_center || null
           }
         }
 
@@ -109,7 +109,7 @@ export default function BookingDetailsPage({
         const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
         if (mockBooking) {
           setBooking(mockBooking)
-          setCenter(mockBooking.training_center)
+          setCenter(mockBooking.training_center || null)
         }
       } finally {
         setIsLoading(false)

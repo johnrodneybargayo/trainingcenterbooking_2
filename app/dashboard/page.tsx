@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { BookOpen, CheckCircle2, Clock, DollarSign, MapPin, AlertCircle } from "lucide-react"
 import type { Booking, TrainingCenter } from "@/lib/products"
-import { BookingDetailsModal } from "@/components/booking-details-modal"
+import BookingDetailsModal from "@/components/booking-details-modal"
 import { mockBookings } from "@/lib/mock-data"
 
 export default function DashboardPage() {

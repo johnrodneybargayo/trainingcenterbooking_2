@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import type { Booking, TrainingCenter, Requirement } from "@/lib/products"
+import { mockBookings } from "@/lib/mock-data"
 
 export default function AdminBookingDetailsPage({
   params,
@@ -107,7 +108,7 @@ export default function AdminBookingDetailsPage({
         const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
         if (mockBooking) {
           setBooking(mockBooking)
-          setCenter(mockBooking.training_center)
+          setCenter(mockBooking.training_center || null)
         }
       } finally {
         setIsLoading(false)

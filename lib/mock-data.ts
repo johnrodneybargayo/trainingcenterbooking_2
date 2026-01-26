@@ -1,4 +1,4 @@
-import type { TrainingCenter, Booking, Profile } from "@/lib/products"
+import type { TrainingCenter, Booking, Profile, Requirement } from "@/lib/products"
 
 // Mock Training Centers
 export const mockTrainingCenters: TrainingCenter[] = [
@@ -156,6 +156,45 @@ export const mockCourses = [
     description: "Advanced navigation and route planning",
     duration_hours: 60,
     capacity: 28,
+  },
+]
+
+// Mock Requirements
+export const mockRequirements: Requirement[] = [
+  {
+    id: "req-001",
+    training_center_id: "center-001",
+    requirement_name: "Passport Copy",
+    requirement_type: "document",
+    is_mandatory: true,
+  },
+  {
+    id: "req-002",
+    training_center_id: "center-001",
+    requirement_name: "Seaman's Book",
+    requirement_type: "document",
+    is_mandatory: true,
+  },
+  {
+    id: "req-003",
+    training_center_id: "center-001",
+    requirement_name: "Medical Certificate",
+    requirement_type: "document",
+    is_mandatory: true,
+  },
+  {
+    id: "req-004",
+    training_center_id: "center-002",
+    requirement_name: "Passport Copy",
+    requirement_type: "document",
+    is_mandatory: true,
+  },
+  {
+    id: "req-005",
+    training_center_id: "center-003",
+    requirement_name: "Engineering License",
+    requirement_type: "document",
+    is_mandatory: true,
   },
 ]
 

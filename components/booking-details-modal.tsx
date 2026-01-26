@@ -12,7 +12,7 @@ import { mockBookings, mockTrainingCenters, getUserById } from "@/lib/mock-data"
 
 interface BookingDetailsModalProps {
   bookingId: string | null
-  initialBooking?: Booking
+  initialBooking?: Booking & { training_center?: TrainingCenter }
   open: boolean
   onOpenChange: (open: boolean) => void
   isAdminView?: boolean
@@ -25,7 +25,7 @@ export default function BookingDetailsModal({
   onOpenChange,
   isAdminView = false,
 }: BookingDetailsModalProps) {
-  const [booking, setBooking] = useState<Booking | null>(initialBooking || null)
+  const [booking, setBooking] = useState<(Booking & { training_center?: TrainingCenter }) | null>(initialBooking || null)
   const [center, setCenter] = useState<TrainingCenter | null>(null)
   const [requirements, setRequirements] = useState<Requirement[]>([])
   const [bookingReqs, setBookingReqs] = useState<any[]>([])
@@ -58,7 +58,7 @@ export default function BookingDetailsModal({
             const mock = mockBookings.find((b) => b.id === bookingId)
             if (mock) {
               bookingData = mock
-              centerData = mock.training_center
+              centerData = mock.training_center || null
             }
           }
         }
