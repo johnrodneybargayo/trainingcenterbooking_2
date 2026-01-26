@@ -10,9 +10,9 @@ This guide will help you get MarineHub up and running with your database and pay
 - Node.js 18+ installed
 
 ### Step 1: Install Dependencies
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ### Step 2: Environment Variables
 Your environment variables are already configured in Vercel. Make sure you have:
@@ -32,9 +32,9 @@ The database schema is defined in `/scripts/001_create_tables.sql`
 5. Click "Run"
 
 **Option B: Using Supabase CLI**
-\`\`\`bash
+```bash
 supabase db push
-\`\`\`
+```
 
 ### Step 4: Seed Demo Data
 Once tables are created, add demo data:
@@ -45,9 +45,9 @@ Once tables are created, add demo data:
 4. Click "Run"
 
 ### Step 5: Start Development Server
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 Visit `http://localhost:3000` to see your app!
 
@@ -110,7 +110,7 @@ All tables are protected with RLS policies. Users can only:
 ### Add Your Own Training Centers
 1. Go to Supabase SQL Editor
 2. Run:
-\`\`\`sql
+```sql
 INSERT INTO public.training_centers (name, description, location, image_url, price_cents, duration_days, rating, reviews_count, capacity)
 VALUES (
   'Your Center Name',
@@ -123,10 +123,10 @@ VALUES (
   50,      -- Review count
   25       -- Capacity
 );
-\`\`\`
+```
 
 ### Add Requirements for a Center
-\`\`\`sql
+```sql
 INSERT INTO public.requirements (training_center_id, requirement_name, requirement_type, is_mandatory)
 VALUES (
   'center-id-here',
@@ -134,16 +134,16 @@ VALUES (
   'document',
   true  -- true for mandatory, false for optional
 );
-\`\`\`
+```
 
 ### Change Refund Policy
 Update the refund_policies table for any center:
-\`\`\`sql
+```sql
 UPDATE public.refund_policies
 SET refund_percentage = 75  -- New percentage
 WHERE training_center_id = 'center-id-here'
 AND days_before_training = 30;
-\`\`\`
+```
 
 ## Troubleshooting
 
@@ -175,11 +175,11 @@ AND days_before_training = 30;
 4. Add environment variables in Vercel settings
 5. Deploy!
 
-\`\`\`bash
+```bash
 git add .
 git commit -m "Initial MarineHub deployment"
 git push origin main
-\`\`\`
+```
 
 ## Support
 

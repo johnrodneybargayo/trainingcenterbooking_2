@@ -2,7 +2,7 @@
 
 ## System Overview
 
-\`\`\`
+```
 ┌─────────────────────────────────────────────────────────────┐
 │                    MarineHub Platform                       │
 └─────────────────────────────────────────────────────────────┘
@@ -39,12 +39,12 @@
 │  ├─ Stripe (Payments)                   │
 │  └─ Supabase Auth (Authentication)      │
 └─────────────────────────────────────────┘
-\`\`\`
+```
 
 ## Data Flow
 
 ### 1. User Registration & Login
-\`\`\`
+```
 Student
   ↓
 Sign Up Form → app/auth/sign-up/page.tsx
@@ -58,10 +58,10 @@ profiles table (User metadata)
 Session stored in cookies
   ↓
 Redirect to Dashboard
-\`\`\`
+```
 
 ### 2. Browse & Book Training Center
-\`\`\`
+```
 Homepage (app/page.tsx)
   ↓
 Fetch training_centers from Supabase
@@ -77,10 +77,10 @@ Fetch center details + requirements + refund_policies
 Display RefundPolicyCard
   ↓
 Click "Book Now" → booking/[id]/page.tsx
-\`\`\`
+```
 
 ### 3. Complete Booking & Payment
-\`\`\`
+```
 booking/[id]/page.tsx
   ↓
 Fetch requirements for training center
@@ -104,11 +104,11 @@ Stripe processes payment
 Update booking status: confirmed
   ↓
 Redirect to dashboard
-\`\`\`
+```
 
 ## Database Schema Relationships
 
-\`\`\`
+```
 auth.users (Supabase managed)
     ↓ (1-to-1)
 profiles
@@ -136,11 +136,11 @@ training_centers (created by admins)
                 - requirement_id (FK to requirements)
                 - is_completed
                 - document_url
-\`\`\`
+```
 
 ## Component Hierarchy
 
-\`\`\`
+```
 app/layout.tsx (Root)
   ├─ Navbar
   │   ├─ Logo
@@ -185,27 +185,27 @@ app/layout.tsx (Root)
       ├─ login/page.tsx
       ├─ sign-up/page.tsx
       └─ sign-up-success/page.tsx
-\`\`\`
+```
 
 ## State Management
 
 ### Client State
-\`\`\`
+```
 - Homepage filters (search, location)
 - Booking form (checked requirements)
 - UI state (loading, modals, dropdowns)
-\`\`\`
+```
 
 ### Server State
-\`\`\`
+```
 - User authentication (via Supabase session cookies)
 - Training center data (from Supabase)
 - Booking data (from Supabase)
 - User profile (from Supabase)
-\`\`\`
+```
 
 ### Session Flow
-\`\`\`
+```
 User Signup
   ↓
 Supabase Auth API
@@ -217,22 +217,22 @@ Each request includes cookie
 createClient() reads from cookie
   ↓
 Access granted based on auth state
-\`\`\`
+```
 
 ## API Routes & Server Actions
 
-\`\`\`
+```
 /app/actions/stripe.ts
   └─ startCheckoutSession(...)
       - Creates Stripe checkout session
       - Returns client secret
       - Server-only for security
-\`\`\`
+```
 
 ## External Integrations
 
 ### Stripe
-\`\`\`
+```
 Frontend (checkout.tsx)
   ↓
 EmbeddedCheckout Component
@@ -246,10 +246,10 @@ Stripe Servers
 Payment Processing
   ↓
 Status → Frontend
-\`\`\`
+```
 
 ### Supabase Auth
-\`\`\`
+```
 User Signup/Login
   ↓
 Email + Password
@@ -261,12 +261,12 @@ Session Token
 Stored in Cookies
   ↓
 Automatic in createClient()
-\`\`\`
+```
 
 ## Security Layers
 
 ### 1. Authentication
-\`\`\`
+```
 Supabase Auth
   ↓
 Email verification
@@ -274,37 +274,37 @@ Email verification
 Session tokens
   ↓
 Secure cookie storage
-\`\`\`
+```
 
 ### 2. Authorization
-\`\`\`
+```
 Row Level Security (RLS) Policies
   ├─ profiles: Can only see own profile
   ├─ bookings: Can only see own bookings
   ├─ booking_requirements: Can only see own
   └─ training_centers: Public read
-\`\`\`
+```
 
 ### 3. Data Protection
-\`\`\`
+```
 - Parameterized queries (Supabase)
 - Input validation (TypeScript)
 - HTTPS/TLS (Production)
 - CSRF protection (Next.js)
-\`\`\`
+```
 
 ### 4. Payment Security
-\`\`\`
+```
 - Stripe handles sensitive data
 - Server-side checkout sessions
 - Client secret validation
 - Never store credit cards
-\`\`\`
+```
 
 ## Deployment Architecture
 
 ### Development
-\`\`\`
+```
 npm run dev
   ↓
 http://localhost:3000
@@ -312,10 +312,10 @@ http://localhost:3000
 Supabase (dev project)
   ↓
 Stripe (test mode)
-\`\`\`
+```
 
 ### Production
-\`\`\`
+```
 Vercel
   ↓
 Next.js App
@@ -325,10 +325,10 @@ Supabase (production project)
 Stripe (live mode)
   ↓
 Custom domain (optional)
-\`\`\`
+```
 
 ### Environment Variables
-\`\`\`
+```
 Development (.env.local):
   NEXT_PUBLIC_SUPABASE_URL=dev_url
   NEXT_PUBLIC_SUPABASE_ANON_KEY=dev_key
@@ -340,38 +340,38 @@ Production (Vercel):
   NEXT_PUBLIC_SUPABASE_ANON_KEY=prod_key
   STRIPE_SECRET_KEY=sk_live_xxx
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
-\`\`\`
+```
 
 ## Performance Optimization
 
 ### Client-Side
-\`\`\`
+```
 - Code splitting (Next.js automatic)
 - Image optimization (next/image)
 - CSS-in-JS (Tailwind - atomic)
 - Component lazy loading
 - Query caching patterns
-\`\`\`
+```
 
 ### Server-Side
-\`\`\`
+```
 - Database indexes on foreign keys
 - Efficient queries (select needed fields only)
 - Pagination (future enhancement)
 - Caching headers (future)
-\`\`\`
+```
 
 ### Network
-\`\`\`
+```
 - Gzip compression (automatic)
 - CDN via Vercel (automatic)
 - CSS/JS minification (automatic)
 - Image optimization (Vercel Images)
-\`\`\`
+```
 
 ## Error Handling
 
-\`\`\`
+```
 Client Errors
   ├─ Network errors → Retry UI
   ├─ Validation errors → Form error messages
@@ -386,7 +386,7 @@ Stripe Errors
   ├─ Payment declined → Show error message
   ├─ Invalid card → Form validation
   └─ Network error → Retry payment
-\`\`\`
+```
 
 ## Scaling Considerations
 
@@ -405,20 +405,20 @@ Stripe Errors
 ## Monitoring & Logging
 
 ### Production Monitoring
-\`\`\`
+```
 - Vercel Analytics (automatic)
 - Supabase error logs
 - Stripe error tracking
 - Custom error boundaries
-\`\`\`
+```
 
 ### Debugging
-\`\`\`
+```
 - Browser DevTools (client-side)
 - Server logs (Vercel)
 - Database logs (Supabase)
 - Stripe Dashboard
-\`\`\`
+```
 
 ---
 

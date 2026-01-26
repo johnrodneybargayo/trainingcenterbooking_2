@@ -27,7 +27,7 @@ export default function TrainingCenterCard({
     <>
       <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer h-full flex flex-col bg-card hover:border-secondary">
         <div
-          className="relative w-full h-56 bg-linear-to-br from-primary/20 to-secondary/20 overflow-hidden"
+          className="relative w-full h-56 bg-gradient-to-br from-primary/20 to-secondary/20 overflow-hidden"
           onClick={() => setShowModal(true)}
         >
           <img
@@ -35,7 +35,7 @@ export default function TrainingCenterCard({
             alt={name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
         </div>
 
         <CardContent className="p-5 flex-1 flex flex-col justify-between space-y-4">

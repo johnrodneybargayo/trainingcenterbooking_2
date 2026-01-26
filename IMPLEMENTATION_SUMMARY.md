@@ -50,7 +50,7 @@ A complete Airbnb-like training center booking platform with professional featur
 ## Files Created/Modified
 
 ### New Pages Created
-\`\`\`
+```
 app/training-center/[id]/page.tsx - Training center details with refund policy
 app/booking/[id]/page.tsx - Requirements checklist
 app/payment/[bookingId]/page.tsx - Stripe payment
@@ -62,38 +62,38 @@ app/admin/bookings/[id]/page.tsx - Admin booking management
 app/auth/login/page.tsx - Login page
 app/auth/sign-up/page.tsx - Sign-up page
 app/auth/sign-up-success/page.tsx - Email verification success
-\`\`\`
+```
 
 ### New Components Created
-\`\`\`
+```
 components/navbar.tsx - Navigation with auth state and dropdown menu
 components/training-center-card.tsx - Reusable training center card
 components/refund-policy-card.tsx - Refund policy display component
 components/checkout.tsx - Stripe embedded checkout
-\`\`\`
+```
 
 ### New Utilities Created
-\`\`\`
+```
 lib/products.ts - TypeScript interfaces (updated with RefundPolicy)
 lib/stripe.ts - Stripe client initialization
 lib/supabase/client.ts - Browser Supabase client
 lib/supabase/server.ts - Server Supabase client
 app/actions/stripe.ts - Stripe checkout server action
-\`\`\`
+```
 
 ### Database Scripts
-\`\`\`
+```
 scripts/001_create_tables.sql - Complete schema with RLS policies
 scripts/002_insert_demo_data.sql - 6 training centers with demo data
-\`\`\`
+```
 
 ### Documentation
-\`\`\`
+```
 DATABASE_SETUP.md - Detailed database setup instructions
 README.md - Full project documentation
 QUICK_START.md - 5-minute quick start guide
 IMPLEMENTATION_SUMMARY.md - This file
-\`\`\`
+```
 
 ## Features Implemented
 
@@ -147,7 +147,7 @@ IMPLEMENTATION_SUMMARY.md - This file
 ## Data Models
 
 ### Training Center
-\`\`\`typescript
+```typescript
 {
   id: UUID
   name: string
@@ -160,10 +160,10 @@ IMPLEMENTATION_SUMMARY.md - This file
   reviews_count: number
   capacity: number
 }
-\`\`\`
+```
 
 ### Booking
-\`\`\`typescript
+```typescript
 {
   id: UUID
   user_id: UUID
@@ -176,10 +176,10 @@ IMPLEMENTATION_SUMMARY.md - This file
   convenience_fee_cents: number
   refund_amount_cents: number
 }
-\`\`\`
+```
 
 ### Refund Policy
-\`\`\`typescript
+```typescript
 {
   id: UUID
   training_center_id: UUID
@@ -187,7 +187,7 @@ IMPLEMENTATION_SUMMARY.md - This file
   refund_percentage: number (0-100)
   description: string
 }
-\`\`\`
+```
 
 ## API Integration
 
@@ -206,12 +206,12 @@ IMPLEMENTATION_SUMMARY.md - This file
 ## Configuration
 
 ### Environment Variables Required
-\`\`\`
+```
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 STRIPE_SECRET_KEY
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-\`\`\`
+```
 
 ### Supabase Requirements
 - PostgreSQL database
@@ -283,7 +283,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
 ## Running the Project
 
-\`\`\`bash
+```bash
 # Install dependencies
 npm install
 
@@ -298,7 +298,7 @@ echo "NEXT_PUBLIC_SUPABASE_URL=..." > .env.local
 npm run dev
 
 # Open http://localhost:3000
-\`\`\`
+```
 
 ## Project Statistics
 

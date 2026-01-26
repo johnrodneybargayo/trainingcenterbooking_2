@@ -16,17 +16,14 @@ export default function Checkout({
   trainingCenterName: string
   priceInCents: number
 }) {
-  const startCheckoutSessionForProduct = useCallback(async () => {
-    const secret = await startCheckoutSession(trainingCenterId, trainingCenterName, priceInCents)
-    if (!secret) {
-      throw new Error("Failed to create checkout session")
-    }
-    return secret
-  }, [trainingCenterId, trainingCenterName, priceInCents])
+  const startCheckoutSessionForProduct = useCallback(
+    () => startCheckoutSession(trainingCenterId, trainingCenterName, priceInCents),
+    [trainingCenterId, trainingCenterName, priceInCents],
+  )
 
   return (
     <div id="checkout" className="w-full">
-      <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret: startCheckoutSessionForProduct }}>
+      <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret: startCheckoutSessionForProduct }}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
     </div>

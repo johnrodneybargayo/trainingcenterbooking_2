@@ -3,18 +3,18 @@
 Get MarineHub running in 5 minutes!
 
 ## Step 1: Install Dependencies (2 min)
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ## Step 2: Setup Environment Variables (1 min)
 Create `.env.local` in your project root:
-\`\`\`
+```
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
 STRIPE_SECRET_KEY=sk_test_your_secret_key
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key
-\`\`\`
+```
 
 Get these from:
 - **Supabase**: Project Settings → API
@@ -33,9 +33,9 @@ Get these from:
 Done! Your database now has 6 training centers with demo data.
 
 ## Step 4: Start Development Server
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 Open http://localhost:3000
 

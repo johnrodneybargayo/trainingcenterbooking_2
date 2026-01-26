@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { createClient } from "@/lib/supabase/client"
+import { useRouter } from "next/navigation"
 import Navbar from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,15 +10,53 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { BookOpen, CheckCircle2, Clock, DollarSign, MapPin, AlertCircle } from "lucide-react"
 import type { Booking, TrainingCenter } from "@/lib/products"
-import BookingDetailsModal from "@/components/booking-details-modal"
-import { mockBookings } from "@/lib/mock-data"
 
 export default function DashboardPage() {
-  const [bookings] = useState<(Booking & { training_center?: TrainingCenter })[]>(
-    mockBookings.filter(b => b.user_id === "user-001")
-  )
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
-  const [showModal, setShowModal] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [bookings, setBookings] = useState<(Booking & { training_center?: TrainingCenter })[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
+  const supabase = createClient()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession()
+      if (!data.session?.user) {
+        router.push("/auth/login")
+        return
+      }
+      setUser(data.session.user)
+
+      // Fetch user bookings
+      const { data: bookingsData } = await supabase
+        .from("bookings")
+        .select("*")
+        .eq("user_id", data.session.user.id)
+        .order("created_at", { ascending: false })
+
+      if (bookingsData) {
+        // Fetch training center details for each booking
+        const bookingsWithCenters = await Promise.all(
+          bookingsData.map(async (booking: Booking) => {
+            const { data: centerData } = await supabase
+              .from("training_centers")
+              .select("*")
+              .eq("id", booking.training_center_id)
+              .single()
+            return {
+              ...booking,
+              training_center: centerData,
+            }
+          }),
+        )
+        setBookings(bookingsWithCenters)
+      }
+
+      setIsLoading(false)
+    }
+
+    checkAuth()
+  }, [supabase, router])
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -68,6 +108,20 @@ export default function DashboardPage() {
       color: "text-amber-600",
     },
   ]
+
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+            <p className="text-muted-foreground">Loading your dashboard...</p>
+          </div>
+        </main>
+      </>
+    )
+  }
 
   return (
     <>
@@ -161,17 +215,11 @@ export default function DashboardPage() {
                           <Badge className={`${getStatusColor(booking.status)} text-xs md:text-sm px-3 py-1`}>
                             {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                           </Badge>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="text-xs md:text-sm bg-transparent"
-                            onClick={() => {
-                              setSelectedBookingId(booking.id)
-                              setShowModal(true)
-                            }}
-                          >
-                            View Details
-                          </Button>
+                          <Link href={`/booking-details/${booking.id}`}>
+                            <Button variant="outline" size="sm" className="text-xs md:text-sm bg-transparent">
+                              View Details
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -193,11 +241,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-        <BookingDetailsModal 
-          bookingId={selectedBookingId}
-          open={showModal}
-          onOpenChange={setShowModal}
-        />
       </main>
     </>
   )

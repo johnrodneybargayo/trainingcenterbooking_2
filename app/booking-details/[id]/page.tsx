@@ -9,9 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import Link from "next/link"
-import { CheckCircle2, AlertCircle, Clock, MapPin, Award } from "lucide-react"
 import type { Booking, TrainingCenter, Requirement } from "@/lib/products"
-import { mockBookings } from "@/lib/mock-data"
 
 export default function BookingDetailsPage({
   params,
@@ -29,11 +27,7 @@ export default function BookingDetailsPage({
   const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null)
 
   useEffect(() => {
-    const resolveParams = async () => {
-      const resolvedParams = await params
-      setResolvedParams(resolvedParams)
-    }
-    resolveParams()
+    params.then(setResolvedParams)
   }, [params])
 
   useEffect(() => {
@@ -53,33 +47,12 @@ export default function BookingDetailsPage({
 
     const fetchData = async () => {
       try {
-        let bookingData = null
-        let centerData = null
-
-        // Try to fetch from Supabase first
-        const { data: sbBooking } = await supabase
+        const { data: bookingData } = await supabase
           .from("bookings")
           .select("*")
           .eq("id", resolvedParams.id)
           .eq("user_id", user.id)
           .single()
-
-        if (sbBooking) {
-          bookingData = sbBooking
-          const { data: sbCenter } = await supabase
-            .from("training_centers")
-            .select("*")
-            .eq("id", sbBooking.training_center_id)
-            .single()
-          centerData = sbCenter
-        } else {
-          // Fallback to mock data
-          const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
-          if (mockBooking) {
-            bookingData = mockBooking
-            centerData = mockBooking.training_center || null
-          }
-        }
 
         if (!bookingData) {
           router.push("/dashboard")
@@ -87,9 +60,15 @@ export default function BookingDetailsPage({
         }
 
         setBooking(bookingData)
+
+        const { data: centerData } = await supabase
+          .from("training_centers")
+          .select("*")
+          .eq("id", bookingData.training_center_id)
+          .single()
+
         setCenter(centerData)
 
-        // Fetch requirements (try Supabase, fallback to empty or mock if needed)
         const { data: reqsData } = await supabase
           .from("requirements")
           .select("*")
@@ -105,12 +84,6 @@ export default function BookingDetailsPage({
         setBookingReqs(bookingReqsData || [])
       } catch (error) {
         console.error("Error fetching data:", error)
-        // Try mock data as last resort if error occurs
-        const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
-        if (mockBooking) {
-          setBooking(mockBooking)
-          setCenter(mockBooking.training_center || null)
-        }
       } finally {
         setIsLoading(false)
       }
@@ -122,26 +95,13 @@ export default function BookingDetailsPage({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200"
+        return "bg-green-100 text-green-800"
       case "pending":
-        return "bg-amber-50 text-amber-700 border-amber-200"
+        return "bg-yellow-100 text-yellow-800"
       case "cancelled":
-        return "bg-red-50 text-red-700 border-red-200"
+        return "bg-red-100 text-red-800"
       default:
-        return "bg-slate-50 text-slate-700 border-slate-200"
-    }
-  }
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle2 className="w-5 h-5" />
-      case "pending":
-        return <Clock className="w-5 h-5" />
-      case "cancelled":
-        return <AlertCircle className="w-5 h-5" />
-      default:
-        return null
+        return "bg-gray-100 text-gray-800"
     }
   }
 
@@ -168,186 +128,113 @@ export default function BookingDetailsPage({
   }
 
   const price = (booking.price_cents / 100).toFixed(2)
-  const completedReqs = bookingReqs.filter((req) => req.is_completed).length
-  const totalReqs = requirements.length
 
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
-              <div>
-                <h1 className="text-4xl font-bold text-foreground mb-1">{center.name}</h1>
-                <p className="text-sm text-muted-foreground">Booking ID: {booking.id.slice(0, 8)}...</p>
-              </div>
-              <Badge
-                className={`${getStatusColor(booking.status)} border flex w-fit gap-2 px-4 py-2 text-sm font-medium`}
-              >
-                {getStatusIcon(booking.status)}
-                {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-              </Badge>
+      <main className="min-h-screen bg-background py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">{center.name}</h1>
+              <p className="text-muted-foreground">Booking ID: {booking.id.slice(0, 8)}...</p>
             </div>
+            <Badge className={getStatusColor(booking.status)}>
+              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+            </Badge>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              {/* Course Overview Card */}
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg">Course Overview</CardTitle>
+              {/* Booking Details */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Booking Information</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <MapPin className="w-4 h-4" />
-                        <span className="text-xs font-medium">Location</span>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Location</p>
+                        <p className="font-medium">{center.location}</p>
                       </div>
-                      <p className="font-semibold text-lg">{center.location}</p>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        <span className="text-xs font-medium">Duration</span>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Duration</p>
+                        <p className="font-medium">{center.duration_days} days</p>
                       </div>
-                      <p className="font-semibold text-lg">{center.duration_days} days</p>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Award className="w-4 h-4" />
-                        <span className="text-xs font-medium">Rating</span>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Booking Date</p>
+                        <p className="font-medium">{new Date(booking.created_at).toLocaleDateString()}</p>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <p className="font-semibold text-lg">{center.rating}</p>
-                        <span className="text-yellow-500">★</span>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Course Fee</p>
+                        <p className="font-medium">${price}</p>
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <span className="text-xs font-medium">Booked On</span>
-                      </div>
-                      <p className="font-semibold text-sm">{new Date(booking.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Requirements Progress */}
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">Documentation Progress</CardTitle>
-                    <span className="text-sm font-semibold text-primary">
-                      {completedReqs} of {totalReqs} completed
-                    </span>
-                  </div>
+              {/* Requirements Checklist */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Required Documentation</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="w-full bg-slate-200 rounded-full h-2">
-                    <div
-                      className="bg-linear-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${totalReqs > 0 ? (completedReqs / totalReqs) * 100 : 0}%` }}
-                    />
-                  </div>
-
                   {requirements.length > 0 ? (
-                    <div className="space-y-3">
-                      {requirements.map((req) => {
-                        const bookingReq = bookingReqs.find((br) => br.requirement_id === req.id)
-                        const isCompleted = bookingReq?.is_completed || false
-                        return (
-                          <div
-                            key={req.id}
-                            className="flex items-start gap-4 p-4 bg-white rounded-lg border border-slate-200 hover:border-primary/30 transition-colors"
-                          >
-                            <div className="shrink-0 pt-0.5">
-                              <Checkbox checked={isCompleted} disabled className="h-5 w-5" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2">
-                                <div>
-                                  <p
-                                    className={`font-medium ${isCompleted ? "line-through text-muted-foreground" : ""}`}
-                                  >
-                                    {req.requirement_name}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground mt-1">
-                                    {req.requirement_type}
-                                    {!req.is_mandatory && " • Optional"}
-                                  </p>
-                                </div>
-                                {isCompleted && (
-                                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                                )}
-                              </div>
-                            </div>
+                    requirements.map((req) => {
+                      const bookingReq = bookingReqs.find((br) => br.requirement_id === req.id)
+                      return (
+                        <div key={req.id} className="flex items-start gap-3 p-3 border border-border rounded-lg">
+                          <Checkbox checked={bookingReq?.is_completed || false} disabled className="mt-1" />
+                          <div className="flex-1">
+                            <p className="font-medium">{req.requirement_name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Type: {req.requirement_type}
+                              {!req.is_mandatory && " (Optional)"}
+                            </p>
                           </div>
-                        )
-                      })}
-                    </div>
+                          {bookingReq?.is_completed && <span className="text-green-600 font-bold">✓</span>}
+                        </div>
+                      )
+                    })
                   ) : (
-                    <p className="text-muted-foreground text-center py-4">No requirements found</p>
+                    <p className="text-muted-foreground">No requirements found</p>
                   )}
                 </CardContent>
               </Card>
             </div>
 
+            {/* Summary */}
             <div className="lg:col-span-1">
-              <Card className="border-0 shadow-sm sticky top-24 h-fit">
-                <CardHeader className="pb-4 border-b border-slate-100">
-                  <CardTitle className="text-lg">Booking Summary</CardTitle>
+              <Card className="sticky top-24">
+                <CardHeader>
+                  <CardTitle>Summary</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6 pt-6">
-                  {/* Training Center Info */}
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                        Training Center
-                      </p>
-                      <p className="text-sm font-semibold text-foreground mt-1">{center.name}</p>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2 pb-4 border-b border-border">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Course</span>
+                      <span className="font-medium">{center.name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Status</span>
+                      <span className="font-medium capitalize">{booking.status}</span>
                     </div>
                   </div>
 
-                  {/* Key Details */}
-                  <div className="space-y-3 py-4 border-y border-slate-100">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Duration</span>
-                      <span className="font-semibold">{center.duration_days} days</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Location</span>
-                      <span className="font-semibold text-right">{center.location}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Status</span>
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {booking.status}
-                      </Badge>
+                  <div className="space-y-2 pb-4 border-b border-border">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Course Fee</span>
+                      <span className="font-medium">${price}</span>
                     </div>
                   </div>
 
-                  {/* Pricing */}
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Course Fee</span>
-                      <span className="font-semibold">${price}</span>
-                    </div>
-                    <div className="pt-3 border-t border-slate-100">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-foreground">Total</span>
-                        <span className="text-xl font-bold text-primary">${price}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="space-y-2 pt-4">
-                    <Link href="/dashboard" className="block w-full">
-                      <Button className="w-full bg-primary hover:bg-primary/90">Back to Dashboard</Button>
-                    </Link>
-                  </div>
+                  <Link href="/dashboard">
+                    <Button variant="outline" className="w-full bg-transparent">
+                      Back to Dashboard
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </div>

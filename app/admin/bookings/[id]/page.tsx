@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import type { Booking, TrainingCenter, Requirement } from "@/lib/products"
-import { mockBookings } from "@/lib/mock-data"
 
 export default function AdminBookingDetailsPage({
   params,
@@ -57,28 +56,7 @@ export default function AdminBookingDetailsPage({
 
     const fetchData = async () => {
       try {
-        let bookingData = null
-        let centerData = null
-
-        // Try Supabase first
-        const { data: sbBooking } = await supabase.from("bookings").select("*").eq("id", resolvedParams.id).single()
-
-        if (sbBooking) {
-          bookingData = sbBooking
-          const { data: sbCenter } = await supabase
-            .from("training_centers")
-            .select("*")
-            .eq("id", sbBooking.training_center_id)
-            .single()
-          centerData = sbCenter
-        } else {
-          // Fallback to mock data
-          const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
-          if (mockBooking) {
-            bookingData = mockBooking
-            centerData = mockBooking.training_center
-          }
-        }
+        const { data: bookingData } = await supabase.from("bookings").select("*").eq("id", resolvedParams.id).single()
 
         if (!bookingData) {
           router.push("/admin/dashboard")
@@ -86,9 +64,15 @@ export default function AdminBookingDetailsPage({
         }
 
         setBooking(bookingData)
+
+        const { data: centerData } = await supabase
+          .from("training_centers")
+          .select("*")
+          .eq("id", bookingData.training_center_id)
+          .single()
+
         setCenter(centerData)
 
-        // Fetch requirements
         const { data: reqsData } = await supabase
           .from("requirements")
           .select("*")
@@ -104,12 +88,6 @@ export default function AdminBookingDetailsPage({
         setBookingReqs(bookingReqsData || [])
       } catch (error) {
         console.error("Error fetching data:", error)
-        // Try mock data as last resort
-        const mockBooking = mockBookings.find((b) => b.id === resolvedParams.id)
-        if (mockBooking) {
-          setBooking(mockBooking)
-          setCenter(mockBooking.training_center || null)
-        }
       } finally {
         setIsLoading(false)
       }
@@ -254,7 +232,7 @@ export default function AdminBookingDetailsPage({
                           className="flex items-start gap-3 p-3 border border-border rounded-lg bg-muted/30"
                         >
                           <div
-                            className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                            className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
                               bookingReq?.is_completed ? "border-green-600 bg-green-600" : "border-gray-300"
                             }`}
                           >

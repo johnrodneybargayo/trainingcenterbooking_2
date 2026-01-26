@@ -281,7 +281,7 @@ export default function TrainingCenterAdminDashboard() {
                     <Label htmlFor="description">Description</Label>
                     <Textarea 
                       id="description" 
-                      className="min-h-[100px]"
+                      className="min-h-25"
                       value={centerSettings.description} 
                       onChange={(e) => setCenterSettings({...centerSettings, description: e.target.value})}
                     />

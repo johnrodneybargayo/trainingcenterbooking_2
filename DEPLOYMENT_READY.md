@@ -37,14 +37,14 @@ Your MarineHub training center booking platform is now fully built, styled, and 
 ## Quick Deployment (3 Steps)
 
 ### Step 1: Finalize Database
-\`\`\`bash
+```bash
 # Run these SQL scripts in Supabase SQL Editor:
 1. scripts/001_create_tables.sql
 2. scripts/002_insert_demo_data.sql
-\`\`\`
+```
 
 ### Step 2: Deploy to Vercel
-\`\`\`bash
+```bash
 # Push to GitHub (if using GitHub)
 git add .
 git commit -m "MarineHub ready for production"
@@ -52,7 +52,7 @@ git push
 
 # Then connect to Vercel and deploy
 # Vercel will automatically detect Next.js and deploy
-\`\`\`
+```
 
 ### Step 3: Configure in Vercel
 1. Go to Vercel Project Settings
@@ -131,35 +131,35 @@ Use Stripe test card:
 ## Customization Before Going Live
 
 ### Update Branding
-\`\`\`tsx
+```tsx
 // components/navbar.tsx
 // Update logo and company name
-\`\`\`
+```
 
 ### Change Colors
-\`\`\`css
+```css
 /* app/globals.css */
 :root {
   --primary: oklch(...);  /* Your brand color */
   --secondary: oklch(...);
 }
-\`\`\`
+```
 
 ### Update Training Centers
-\`\`\`sql
+```sql
 -- In Supabase, update training_centers table
 UPDATE training_centers 
 SET name = 'Your Center', 
     description = 'Your description'
 WHERE id = 'center-id';
-\`\`\`
+```
 
 ### Customize Requirements
-\`\`\`sql
+```sql
 -- Add your specific requirements per center
 INSERT INTO requirements (...)
 VALUES (...);
-\`\`\`
+```
 
 ## Going from Test to Production
 

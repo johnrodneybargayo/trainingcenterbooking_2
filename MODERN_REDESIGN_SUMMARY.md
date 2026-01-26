@@ -67,17 +67,17 @@
 ### Key Features Implemented
 
 #### Login-to-Book Flow
-\`\`\`
+```
 1. User clicks "View Details" on training center
 2. Modal shows requirements
 3. User clicks "Login to Book"
 4. If not logged in → redirects to login with redirect parameter
 5. After login → automatically goes to booking page
 6. User checks off requirements → proceeds to payment
-\`\`\`
+```
 
 #### Requirements Upload After Booking
-\`\`\`
+```
 1. User completes booking (status = pending)
 2. Booking requirements table is created
 3. User sees upload interface
@@ -85,10 +85,10 @@
 5. Each upload updates the booking_requirements table
 6. When all mandatory docs are uploaded → can confirm booking
 7. Booking status changes to "confirmed"
-\`\`\`
+```
 
 #### Refund Policy Display
-\`\`\`
+```
 1. Each training center has refund policies
 2. Policies shown in detail modal:
    - 30+ days: 100% refund
@@ -96,16 +96,16 @@
    - 7-14 days: 25% refund
    - <7 days: No refund
 3. Convenience fee (2%) added to total
-\`\`\`
+```
 
 ## Color System
 
-\`\`\`css
+```css
 Primary: Ocean Blue (oklch(0.45 0.18 260))
 Secondary: Teal (oklch(0.55 0.15 180))
 Accent: Gold (oklch(0.6 0.2 40))
 Background: Light Gray (oklch(0.98 0.001 270))
-\`\`\`
+```
 
 ## Responsive Breakpoints
 
@@ -141,7 +141,7 @@ Background: Light Gray (oklch(0.98 0.001 270))
 ## Database Changes
 
 ### New Tables Structure
-\`\`\`
+```
 training_centers (6 demo records)
 ├── id, name, description, location
 ├── image_url, price_cents, duration_days
@@ -168,7 +168,7 @@ booking_requirements (user created)
 ├── id, booking_id, requirement_id
 ├── is_completed, document_url
 └── created_at
-\`\`\`
+```
 
 ## API Endpoints
 
@@ -187,7 +187,7 @@ booking_requirements (user created)
 
 ## File Structure
 
-\`\`\`
+```
 app/
 ├── page.tsx (Homepage)
 ├── layout.tsx (Root layout)
@@ -217,7 +217,7 @@ lib/
 scripts/
 ├── 001_create_tables.sql
 └── 002_insert_demo_data.sql
-\`\`\`
+```
 
 ## Testing Scenarios
 

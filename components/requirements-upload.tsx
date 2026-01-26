@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,56 +30,6 @@ export default function RequirementsUpload({ bookingId, requirements, onComplete
   const [uploadingId, setUploadingId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const supabase = createClient()
-
-  // Initialize booking requirements from props or fetch from Supabase
-  useEffect(() => {
-    const initRequirements = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("booking_requirements")
-          .select("*, requirements(requirement_name, is_mandatory)")
-          .eq("booking_id", bookingId)
-
-        if (error || !data || data.length === 0) {
-          // Fallback or initialization from props
-          const initialReqs = requirements.map((req) => ({
-            id: `mock-booking-req-${Math.random()}`,
-            requirement_id: req.id,
-            is_completed: false,
-            document_url: null,
-            requirement_name: req.requirement_name,
-            is_mandatory: req.is_mandatory,
-          }))
-          setBookingRequirements(initialReqs)
-        } else {
-          // Transform Supabase data
-          const mappedReqs = data.map((item: any) => ({
-            id: item.id,
-            requirement_id: item.requirement_id,
-            is_completed: item.is_completed,
-            document_url: item.document_url,
-            requirement_name: item.requirements?.requirement_name || "Unknown Requirement",
-            is_mandatory: item.requirements?.is_mandatory || false,
-          }))
-          setBookingRequirements(mappedReqs)
-        }
-      } catch (error) {
-        console.error("Error initializing requirements:", error)
-        // Fallback on error
-        const initialReqs = requirements.map((req) => ({
-          id: `mock-booking-req-${Math.random()}`,
-          requirement_id: req.id,
-          is_completed: false,
-          document_url: null,
-          requirement_name: req.requirement_name,
-          is_mandatory: req.is_mandatory,
-        }))
-        setBookingRequirements(initialReqs)
-      }
-    }
-
-    initRequirements()
-  }, [bookingId, requirements, supabase])
 
   const mandatoryReqs = bookingRequirements.filter((r) => r.is_mandatory)
   const optionalReqs = bookingRequirements.filter((r) => !r.is_mandatory)
@@ -116,13 +66,7 @@ export default function RequirementsUpload({ bookingId, requirements, onComplete
       )
     } catch (error) {
       console.error("Upload error:", error)
-      // Fallback: Simulate successful upload for mock/demo
-      const mockUrl = URL.createObjectURL(file)
-      setBookingRequirements((prev) =>
-        prev.map((r) =>
-          r.requirement_id === requirementId ? { ...r, is_completed: true, document_url: mockUrl } : r,
-        ),
-      )
+      alert("Failed to upload document")
     } finally {
       setUploadingId(null)
     }
@@ -142,8 +86,7 @@ export default function RequirementsUpload({ bookingId, requirements, onComplete
       onComplete?.()
     } catch (error) {
       console.error("Error confirming booking:", error)
-      // Fallback: Simulate success for mock/demo
-      onComplete?.()
+      alert("Failed to confirm booking")
     } finally {
       setIsLoading(false)
     }

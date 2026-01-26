@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, use } from "react"
+import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import Navbar from "@/components/navbar"
@@ -12,14 +12,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
 import { CheckCircle2, Circle, AlertCircle, Clock, DollarSign } from "lucide-react"
 import type { TrainingCenter, Requirement } from "@/lib/products"
-import { mockTrainingCenters, mockRequirements } from "@/lib/mock-data"
 
 export default function BookingPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const { id } = use(params)
+  const { id } = params
   const [center, setCenter] = useState<TrainingCenter | null>(null)
   const [requirements, setRequirements] = useState<Requirement[]>([])
   const [user, setUser] = useState<any>(null)
@@ -50,28 +49,13 @@ export default function BookingPage({
       try {
         const { data: centerData } = await supabase.from("training_centers").select("*").eq("id", id).single()
 
-        if (centerData) {
-          setCenter(centerData)
-          const { data: reqData } = await supabase.from("requirements").select("*").eq("training_center_id", id)
-          setRequirements(reqData || [])
-        } else {
-          // Fallback to mock data if not found in Supabase
-          const mockCenter = mockTrainingCenters.find((c) => c.id === id)
-          if (mockCenter) {
-            setCenter(mockCenter)
-            const mockReqs = mockRequirements.filter((r) => r.training_center_id === id)
-            setRequirements(mockReqs)
-          }
-        }
+        setCenter(centerData)
+
+        const { data: reqData } = await supabase.from("requirements").select("*").eq("training_center_id", id)
+
+        setRequirements(reqData || [])
       } catch (error) {
         console.error("Error fetching data:", error)
-        // Fallback to mock data on error
-        const mockCenter = mockTrainingCenters.find((c) => c.id === id)
-        if (mockCenter) {
-          setCenter(mockCenter)
-          const mockReqs = mockRequirements.filter((r) => r.training_center_id === id)
-          setRequirements(mockReqs)
-        }
       } finally {
         setIsLoading(false)
       }
@@ -132,10 +116,7 @@ export default function BookingPage({
       }
     } catch (error) {
       console.error("Error creating booking:", error)
-      // Fallback to mock booking creation
-      const mockId = `mock-booking-${Date.now()}`
-      setBookingId(mockId)
-      setBookingCreated(true)
+      alert("Failed to create booking. Please try again.")
     } finally {
       setIsSubmitting(false)
     }

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
+import { createClient } from "@/lib/supabase/client"
 import Navbar from "@/components/navbar"
 import TrainingCenterCard from "@/components/training-center-card"
 import { Button } from "@/components/ui/button"
@@ -10,19 +11,38 @@ import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
 import { Search, Filter, X } from "lucide-react"
 import type { TrainingCenter } from "@/lib/products"
-import { mockTrainingCenters } from "@/lib/mock-data"
 
 export default function HomePage() {
-  const [trainingCenters] = useState<TrainingCenter[]>(mockTrainingCenters)
-  const [filteredCenters, setFilteredCenters] = useState<TrainingCenter[]>(mockTrainingCenters)
+  const [trainingCenters, setTrainingCenters] = useState<TrainingCenter[]>([])
+  const [filteredCenters, setFilteredCenters] = useState<TrainingCenter[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedLocation, setSelectedLocation] = useState("all")
   const [selectedDuration, setSelectedDuration] = useState("all")
   const [priceRange, setPriceRange] = useState([0, 200000])
   const [selectedRating, setSelectedRating] = useState("all")
+  const [isLoading, setIsLoading] = useState(true)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-  const applyFilters = () => {
+  const supabase = createClient()
+
+  useEffect(() => {
+    const fetchTrainingCenters = async () => {
+      try {
+        const { data, error } = await supabase.from("training_centers").select("*")
+        if (error) throw error
+        setTrainingCenters(data || [])
+        setFilteredCenters(data || [])
+      } catch (error) {
+        console.error("Error fetching training centers:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchTrainingCenters()
+  }, [supabase])
+
+  useEffect(() => {
     let filtered = trainingCenters
 
     if (searchQuery) {
@@ -38,6 +58,7 @@ export default function HomePage() {
     }
 
     if (selectedDuration !== "all") {
+      const duration = Number.parseInt(selectedDuration)
       if (selectedDuration === "short") {
         filtered = filtered.filter((center) => center.duration_days <= 14)
       } else if (selectedDuration === "medium") {
@@ -55,18 +76,14 @@ export default function HomePage() {
     }
 
     setFilteredCenters(filtered)
-  }
-
-  useEffect(() => {
-    applyFilters()
-  }, [searchQuery, selectedLocation, selectedDuration, priceRange, selectedRating])
+  }, [searchQuery, selectedLocation, selectedDuration, priceRange, selectedRating, trainingCenters])
 
   const locations = Array.from(new Set(trainingCenters.map((center) => center.location)))
   const activeFilters = [
     selectedLocation !== "all" && selectedLocation,
     selectedDuration !== "all" && selectedDuration,
     selectedRating !== "all" && `${selectedRating}+ stars`,
-  ].filter((f): f is string => typeof f === "string")
+  ].filter(Boolean) as string[]
 
   const resetFilters = () => {
     setSearchQuery("")
@@ -172,8 +189,7 @@ export default function HomePage() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Desktop Sidebar Filters */}
             <aside className="hidden lg:block w-64 shrink-0">
-              <div className="sticky top-24 space-y-8">
-                {/* Training Centers List */}
+              <div className="sticky top-32 space-y-6 bg-card p-6 rounded-lg border border-border">
                 <div>
                   <h3 className="font-semibold mb-3 flex items-center justify-between">
                     Filters
@@ -276,7 +292,12 @@ export default function HomePage() {
               </div>
 
               {/* Grid */}
-              {filteredCenters.length > 0 ? (
+              {isLoading ? (
+                <div className="text-center py-16">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <p className="text-muted-foreground mt-4">Loading training centers...</p>
+                </div>
+              ) : filteredCenters.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                   {filteredCenters.map((center) => (
                     <TrainingCenterCard key={center.id} {...center} />

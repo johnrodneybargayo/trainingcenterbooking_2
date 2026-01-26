@@ -21,9 +21,9 @@ All demo training centers use the standard refund policy:
 
 ### 1. Policy Display
 Students see the refund policy on the training center detail page:
-\`\`\`
+```
 app/training-center/[id]/page.tsx → RefundPolicyCard component
-\`\`\`
+```
 
 The card clearly shows:
 - Days before training requirement
@@ -34,7 +34,7 @@ The card clearly shows:
 ### 2. Database Storage
 Refund policies are stored in the `refund_policies` table:
 
-\`\`\`sql
+```sql
 CREATE TABLE refund_policies (
   id UUID PRIMARY KEY,
   training_center_id UUID NOT NULL,
@@ -42,20 +42,20 @@ CREATE TABLE refund_policies (
   refund_percentage INTEGER,        -- 100, 50, 25, 0
   description TEXT                  -- Display text
 )
-\`\`\`
+```
 
 Example records:
-\`\`\`
+```
 training_center_id: 550e8400-e29b-41d4-a716-446655440001
 days_before_training: 30, refund_percentage: 100
 days_before_training: 29, refund_percentage: 50
 days_before_training: 14, refund_percentage: 25
 days_before_training: 6,  refund_percentage: 0
-\`\`\`
+```
 
 ### 3. Booking with Refund Tracking
 The `bookings` table tracks:
-\`\`\`typescript
+```typescript
 {
   price_cents: 150000,           // Original price
   convenience_fee_cents: 3000,   // 2% fee
@@ -63,7 +63,7 @@ The `bookings` table tracks:
   status: 'pending'              // pending/confirmed/completed/cancelled
   cancelled_at: null             // Set when cancelled
 }
-\`\`\`
+```
 
 ## Refund Calculation Example
 
@@ -94,20 +94,20 @@ The `bookings` table tracks:
 ### Option 2: Via SQL Script
 Update `scripts/002_insert_demo_data.sql` before inserting:
 
-\`\`\`sql
+```sql
 INSERT INTO refund_policies 
   (training_center_id, days_before_training, refund_percentage, description)
 VALUES
   ('center-id', 30, 100, '30+ days - Full refund'),
   ('center-id', 29, 50, '15-29 days - 50% refund');
-\`\`\`
+```
 
 ### Option 3: Admin UI (Future Feature)
 Future implementation can add an admin page to customize policies via UI.
 
 ## Retrieving Policies in Code
 
-\`\`\`typescript
+```typescript
 // On training center detail page
 const { data: policiesData } = await supabase
   .from("refund_policies")
@@ -119,18 +119,18 @@ const { data: policiesData } = await supabase
 const sortedPolicies = policies.sort((a, b) => 
   b.days_before_training - a.days_before_training
 )
-\`\`\`
+```
 
 ## UI Component: RefundPolicyCard
 
 Location: `components/refund-policy-card.tsx`
 
-\`\`\`typescript
+```typescript
 <RefundPolicyCard 
   policies={refundPolicies}
   convenienceFeePercent={2}
 />
-\`\`\`
+```
 
 Features:
 - ✅ Sorted by days (highest to lowest)
@@ -143,7 +143,7 @@ Features:
 
 When viewing a training center, students see:
 
-\`\`\`
+```
 ┌─ REFUND & CANCELLATION POLICY ───────────────────┐
 │                                                   │
 │ 30+ days before training - Full refund           │
@@ -162,7 +162,7 @@ When viewing a training center, students see:
 │ booking                                          │
 │                                                   │
 └───────────────────────────────────────────────────┘
-\`\`\`
+```
 
 ## Admin Features
 
@@ -176,7 +176,7 @@ Admin can view booking details showing:
 
 ### Cancel Booking (Future)
 When implementing cancellation:
-\`\`\`typescript
+```typescript
 // Calculate refund
 const daysBefore = (trainingStartDate - now) / (1000 * 60 * 60 * 24)
 const policy = refundPolicies.find(p => 
@@ -184,7 +184,7 @@ const policy = refundPolicies.find(p =>
 )
 const refundPercent = policy.refund_percentage
 const refundAmount = (booking.price_cents * refundPercent) / 100
-\`\`\`
+```
 
 ## Convenience Fee Explanation
 
@@ -199,7 +199,7 @@ Fee is calculated as: `price_cents * 0.02`
 
 Admins can query refund data:
 
-\`\`\`sql
+```sql
 -- Total refunds by policy tier
 SELECT 
   refund_percentage,
@@ -219,7 +219,7 @@ FROM bookings b
 JOIN training_centers tc ON b.training_center_id = tc.id
 WHERE b.status = 'cancelled'
 GROUP BY tc.id, tc.name;
-\`\`\`
+```
 
 ## Best Practices
 
@@ -285,12 +285,12 @@ GROUP BY tc.id, tc.name;
 ## Quick Reference
 
 **Standard Policy (all demo centers):**
-\`\`\`
+```
 30+ days  → 100%
 15-29 days → 50%
 7-14 days  → 25%
 <7 days    → 0%
-\`\`\`
+```
 
 **Convenience Fee:** 2% of total booking amount
 
