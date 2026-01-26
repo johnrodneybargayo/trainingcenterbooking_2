@@ -153,7 +153,7 @@ export default function TrainingCenterModal({ trainingCenterId, open, onOpenChan
                         key={req.id}
                         className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800"
                       >
-                        <CheckCircle2 className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+                        <CheckCircle2 className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-card-foreground">{req.requirement_name}</span>
                       </div>
                     ))}
@@ -169,7 +169,7 @@ export default function TrainingCenterModal({ trainingCenterId, open, onOpenChan
                   <div className="space-y-2">
                     {optionalReqs.map((req) => (
                       <div key={req.id} className="flex items-start gap-3 p-3 bg-muted rounded-lg">
-                        <Circle className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
+                        <Circle className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-muted-foreground">{req.requirement_name}</span>
                       </div>
                     ))}

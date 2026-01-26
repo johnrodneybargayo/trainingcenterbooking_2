@@ -37,7 +37,7 @@ export default function DashboardPage() {
       if (bookingsData) {
         // Fetch training center details for each booking
         const bookingsWithCenters = await Promise.all(
-          bookingsData.map(async (booking: Booking) => {
+          bookingsData.map(async (booking) => {
             const { data: centerData } = await supabase
               .from("training_centers")
               .select("*")
@@ -126,12 +126,12 @@ export default function DashboardPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-linear-to-br from-background to-muted/30">
+      <main className="min-h-screen bg-gradient-to-br from-background to-muted/30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-linear-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-primary-foreground" />
               </div>
               <h1 className="text-3xl md:text-4xl font-bold">My Bookings</h1>
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                         {/* Left Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start gap-3 mb-3">
-                            <div className="shrink-0 mt-1">{getStatusIcon(booking.status)}</div>
+                            <div className="flex-shrink-0 mt-1">{getStatusIcon(booking.status)}</div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-semibold text-lg md:text-xl text-card-foreground truncate">
                                 {booking.training_center?.name || "Unknown Center"}
@@ -192,19 +192,19 @@ export default function DashboardPage() {
                           {/* Details Grid */}
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
                             <div className="flex items-center gap-2 text-sm">
-                              <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
+                              <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                               <span className="text-muted-foreground">
                                 {booking.training_center?.location || "Unknown"}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-sm">
-                              <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+                              <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                               <span className="text-muted-foreground">
                                 {new Date(booking.created_at).toLocaleDateString()}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-sm">
-                              <DollarSign className="w-4 h-4 text-muted-foreground shrink-0" />
+                              <DollarSign className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                               <span className="font-semibold">${(booking.price_cents / 100).toFixed(2)}</span>
                             </div>
                           </div>
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                   </div>
                   <p className="text-muted-foreground text-lg mb-6">You haven't booked any training centers yet</p>
                   <Link href="/">
-                    <Button className="bg-linear-to-r from-primary to-secondary hover:opacity-90">
+                    <Button className="bg-gradient-to-r from-primary to-secondary hover:opacity-90">
                       Browse Training Centers
                     </Button>
                   </Link>

@@ -77,7 +77,7 @@ export default function BookingPage({
   const mandatoryReqs = requirements.filter((r) => r.is_mandatory)
   const optionalReqs = requirements.filter((r) => !r.is_mandatory)
   const allMandatoryComplete = mandatoryReqs.every((r) => completedReqs.has(r.id))
-  const price = ((center?.price_cents || 0) / 100).toFixed(2)
+  const price = (center?.price_cents / 100).toFixed(2)
   const convenienceFee = Math.round((center?.price_cents || 0) * 0.02)
   const totalPrice = (center?.price_cents || 0) + convenienceFee
 
@@ -157,7 +157,7 @@ export default function BookingPage({
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-linear-to-br from-background to-muted/30 py-8 md:py-12">
+      <main className="min-h-screen bg-gradient-to-br from-background to-muted/30 py-8 md:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
@@ -240,7 +240,7 @@ export default function BookingPage({
                             <p className="text-xs text-muted-foreground mt-1">{req.requirement_type}</p>
                           </div>
                           {completedReqs.has(req.id) && (
-                            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+                            <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
                           )}
                         </div>
                       ))
@@ -276,7 +276,7 @@ export default function BookingPage({
                             <p className="text-xs text-muted-foreground mt-1">{req.requirement_type}</p>
                           </div>
                           {completedReqs.has(req.id) && (
-                            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+                            <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
                           )}
                         </div>
                       ))}
@@ -318,7 +318,7 @@ export default function BookingPage({
                       </p>
                       <div className="w-full bg-muted rounded-full h-2">
                         <div
-                          className="bg-linear-to-r from-primary to-secondary h-2 rounded-full transition-all"
+                          className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all"
                           style={{
                             width: `${mandatoryReqs.length > 0 ? (completedReqs.size / mandatoryReqs.length) * 100 : 0}%`,
                           }}
@@ -360,7 +360,7 @@ export default function BookingPage({
                       onClick={handleCreateBooking}
                       disabled={!allMandatoryComplete || isSubmitting}
                       size="lg"
-                      className="w-full bg-linear-to-r from-primary to-secondary hover:opacity-90"
+                      className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
                     >
                       {isSubmitting ? "Creating Booking..." : "Proceed to Payment"}
                     </Button>
