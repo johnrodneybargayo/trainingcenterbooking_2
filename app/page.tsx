@@ -12,6 +12,99 @@ import { Badge } from "@/components/ui/badge"
 import { Search, Filter, X } from "lucide-react"
 import type { TrainingCenter } from "@/lib/products"
 
+const MOCK_TRAINING_CENTERS: TrainingCenter[] = [
+  {
+    id: "550e8400-e29b-41d4-a716-446655440001",
+    name: "Global Maritime Academy",
+    description: "World-class maritime training center specializing in advanced navigation and ship management",
+    location: "Singapore",
+    image_url: "https://images.unsplash.com/photo-1567521464027-f127ff144326?w=500&h=400&fit=crop",
+    price_cents: 350000,
+    duration_days: 21,
+    rating: 4.8,
+    reviews_count: 245,
+    capacity: 40,
+    admin_id: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440002",
+    name: "Blue Horizon Training Institute",
+    description: "Comprehensive marine engineering and safety training programs",
+    location: "Malta",
+    image_url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=500&h=400&fit=crop",
+    price_cents: 450000,
+    duration_days: 30,
+    rating: 4.7,
+    reviews_count: 189,
+    capacity: 35,
+    admin_id: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440003",
+    name: "Advanced Maritime Institute",
+    description: "Specialized training for chief engineers and master mariners with modern simulators",
+    location: "Dubai",
+    image_url: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500&h=400&fit=crop",
+    price_cents: 550000,
+    duration_days: 35,
+    rating: 4.9,
+    reviews_count: 320,
+    capacity: 30,
+    admin_id: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440004",
+    name: "Pacific Naval Academy",
+    description: "Focus on deck cadet training and nautical officer certification programs",
+    location: "Philippines",
+    image_url: "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=500&h=400&fit=crop",
+    price_cents: 280000,
+    duration_days: 18,
+    rating: 4.6,
+    reviews_count: 156,
+    capacity: 45,
+    admin_id: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440005",
+    name: "European Maritime College",
+    description: "Premium maritime education with EU-certified courses and professional development",
+    location: "Rotterdam",
+    image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=400&fit=crop",
+    price_cents: 520000,
+    duration_days: 28,
+    rating: 4.7,
+    reviews_count: 267,
+    capacity: 32,
+    admin_id: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440006",
+    name: "Ocean Safety Institute",
+    description: "Safety, security and environmental protection training for maritime professionals",
+    location: "Mumbai",
+    image_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&h=400&fit=crop",
+    price_cents: 220000,
+    duration_days: 14,
+    rating: 4.5,
+    reviews_count: 98,
+    capacity: 50,
+    admin_id: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+]
+
 export default function HomePage() {
   const [trainingCenters, setTrainingCenters] = useState<TrainingCenter[]>([])
   const [filteredCenters, setFilteredCenters] = useState<TrainingCenter[]>([])
@@ -29,11 +122,20 @@ export default function HomePage() {
     const fetchTrainingCenters = async () => {
       try {
         const { data, error } = await supabase.from("training_centers").select("*")
-        if (error) throw error
+        if (error) {
+          console.error("Database error:", error)
+          // Use mock data if database not set up
+          setTrainingCenters(MOCK_TRAINING_CENTERS)
+          setFilteredCenters(MOCK_TRAINING_CENTERS)
+          throw error
+        }
         setTrainingCenters(data || [])
         setFilteredCenters(data || [])
       } catch (error) {
         console.error("Error fetching training centers:", error)
+        // Fallback to mock data
+        setTrainingCenters(MOCK_TRAINING_CENTERS)
+        setFilteredCenters(MOCK_TRAINING_CENTERS)
       } finally {
         setIsLoading(false)
       }
