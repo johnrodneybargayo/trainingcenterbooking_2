@@ -116,23 +116,28 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-  const supabase = createClient()
-
   useEffect(() => {
     const fetchTrainingCenters = async () => {
       try {
+        const supabase = createClient()
         const { data, error } = await supabase.from("training_centers").select("*")
+        
         if (error) {
-          console.error("Database error:", error)
+          console.error("[v0] Database error:", error)
           // Use mock data if database not set up
           setTrainingCenters(MOCK_TRAINING_CENTERS)
           setFilteredCenters(MOCK_TRAINING_CENTERS)
-          throw error
+        } else if (data && data.length > 0) {
+          console.log("[v0] Loaded real data from database:", data.length, "centers")
+          setTrainingCenters(data)
+          setFilteredCenters(data)
+        } else {
+          console.log("[v0] No data in database, using mock data")
+          setTrainingCenters(MOCK_TRAINING_CENTERS)
+          setFilteredCenters(MOCK_TRAINING_CENTERS)
         }
-        setTrainingCenters(data || [])
-        setFilteredCenters(data || [])
       } catch (error) {
-        console.error("Error fetching training centers:", error)
+        console.error("[v0] Error fetching training centers:", error)
         // Fallback to mock data
         setTrainingCenters(MOCK_TRAINING_CENTERS)
         setFilteredCenters(MOCK_TRAINING_CENTERS)
@@ -142,7 +147,7 @@ export default function HomePage() {
     }
 
     fetchTrainingCenters()
-  }, [supabase])
+  }, [])
 
   useEffect(() => {
     let filtered = trainingCenters
